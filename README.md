@@ -1,36 +1,123 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PMA Explorer
 
-## Getting Started
+A demo collection explorer for the **Portland Museum of Art**.
 
-First, run the development server:
+This is the proof-of-concept for a planned full-collection index covering all
+~22,000 PMA objects. The demo uses only the ~80 featured artworks published on
+the museum's public marketing page, scraped within `robots.txt`.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Live (target):** https://pma-explorer.jbf.com
+- **Stack:** Next.js 16 (App Router) · TypeScript · Tailwind v4 · shadcn/ui
+- **Design:** Dragon Design System — Libre Baskerville headlines, Source Sans
+  Pro body, IBM Plex Mono data, warm cream background, surgical red accents.
+
+## Project layout
+
+```
+pma-explorer/
+├── data/
+│   └── works.json            # Scraped output, committed
+├── scripts/
+│   ├── scrape_pma.py         # Phase 1: HTML scraper (httpx + bs4)
+│   └── requirements.txt
+└── src/
+    ├── app/                  # Next.js App Router
+    ├── components/
+    └── lib/works.ts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Develop
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev          # http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Re-run the scraper
 
-## Learn More
+The scraper writes `data/works.json`. The Next.js app imports that file at
+build time, so you re-run the scraper before committing or deploying.
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r scripts/requirements.txt
+python scripts/scrape_pma.py --verbose
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Optional flags:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Flag        | Default                | Meaning                                  |
+|-------------|------------------------|------------------------------------------|
+| `--delay`   | `1.0`                  | Seconds between requests (rate limit)    |
+| `--max`     | `0` (no cap)           | Truncate output after N works            |
+| `--out`     | `data/works.json`      | Output path                              |
+| `--verbose` | off                    | Print per-category counts                |
 
-## Deploy on Vercel
+## Scope and constraints
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This demo deliberately scrapes only the marketing domain
+`www.portlandmuseum.org`. The full collection database lives at
+`collections.portlandmuseum.org`, which **disallows** all non-Google user
+agents in `robots.txt` and explicitly blocks `/objects-1/` (the artwork detail
+path). The scraper checks `robots.txt` at runtime via `urllib.robotparser` and
+will refuse to fetch any disallowed URL.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For the planned 22K-object phase we will:
+
+1. Contact PMA directly to request a data export or rate-limited API access
+   from the EmbARK installation, **or**
+2. Replace the data source with a museum that publishes an open API/CSV (Met,
+   Cleveland, Smithsonian, etc.) and rebrand accordingly.
+
+We will *not* bypass `robots.txt` even if Firecrawl makes it technically easy.
+
+## Data shape
+
+Each entry in `works.json` looks like:
+
+```jsonc
+{
+  "id": "1888.1",
+  "title": "The Dead Pearl Diver",
+  "artist": "Benjamin Paul Akers",
+  "year": "1858",
+  "medium": "Marble",
+  "dimensions": "27 x 67 x 28 inches",
+  "image_url": "https://portlandmuseum.org/wp-content/uploads/2025/11/1888.1.avif",
+  "credit_line": "Museum purchase with support from …",
+  "accession_number": "1888.1",
+  "description": null,
+  "category": "American Art",
+  "source_url": "https://www.portlandmuseum.org/collection/",
+  "artist_nationality": "United States, 1825–1861",
+  "copyright_notice": null,
+  "raw_caption": "…full alt text…"
+}
+```
+
+Field coverage on the current dataset:
+
+| Field              | Coverage |
+|--------------------|----------|
+| id, title, artist, image, category | 100% |
+| accession_number   | ~88% |
+| medium, dimensions | ~70% |
+| credit_line, year  | ~70% |
+| copyright_notice   | ~12% (only when ©-tagged in alt) |
+| description        | 0% (lives only on the locked-down EmbARK pages) |
+
+## Deploy (Vercel)
+
+```bash
+vercel link              # link to Vercel project `pma-explorer`
+vercel --prod
+```
+
+Custom domain `pma-explorer.jbf.com` is wired via Cloudflare CNAME (DNS only,
+not proxied) once the Vercel domain is added in the dashboard.
+
+## License & attribution
+
+Unofficial demo. All images and metadata © Portland Museum of Art and
+respective artists, used for non-commercial demonstration purposes.
