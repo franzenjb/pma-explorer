@@ -1,19 +1,10 @@
 import { ImageResponse } from "next/og";
-import { findWork, loadWorks } from "@/lib/works";
+import { findWork } from "@/lib/works";
 
 export const runtime = "nodejs";
 export const alt = "PMA Explorer — work preview";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-
-export function generateImageMetadata() {
-  return loadWorks().map((w) => ({
-    id: w.id,
-    alt: `${w.title}${w.artist ? `, ${w.artist}` : ""}`,
-    contentType: "image/png",
-    size,
-  }));
-}
 
 export default async function OG({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
