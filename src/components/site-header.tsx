@@ -1,13 +1,19 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { CommandPalette } from "@/components/command-palette";
+import { loadWorks } from "@/lib/works";
 
 const NAV = [
   { href: "/", label: "Collection" },
+  { href: "/color", label: "Color" },
   { href: "/artists", label: "Artists" },
+  { href: "/compare", label: "Compare" },
+  { href: "/daily", label: "Daily" },
   { href: "/stats", label: "Stats" },
 ];
 
 export function SiteHeader() {
+  const works = loadWorks();
   return (
     <header className="border-b-[3px] border-arc-black bg-card">
       <div className="mx-auto max-w-7xl px-6 pt-8 pb-6">
@@ -17,7 +23,7 @@ export function SiteHeader() {
             Portland Museum of Art
           </span>
         </div>
-        <div className="mt-1 flex items-end justify-between gap-6">
+        <div className="mt-1 flex flex-wrap items-end justify-between gap-6">
           <Link href="/" className="block">
             <h1 className="font-headline text-[30px] font-bold leading-tight tracking-tight">
               PMA Explorer
@@ -26,8 +32,9 @@ export function SiteHeader() {
               A demonstration index of the museum&rsquo;s public collection.
             </p>
           </Link>
-          <div className="flex items-center gap-2 sm:gap-5">
-            <nav className="flex items-center gap-4 text-sm sm:gap-6">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-5">
+            <CommandPalette works={works} />
+            <nav className="flex flex-wrap items-center gap-3 text-sm sm:gap-5">
               {NAV.map((n) => (
                 <Link
                   key={n.href}
@@ -55,9 +62,6 @@ export function SiteHeader() {
   );
 }
 
-/* PMA wordmark — small italic monogram. (NOT the Red Cross mark — this is a
- * museum demo, so we substitute a lightweight typographic mark.)
- */
 function Mark() {
   return (
     <span

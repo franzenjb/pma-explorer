@@ -13,6 +13,10 @@ import {
   pickRandom,
   searchAndSort,
 } from "@/lib/works";
+import { getDaily, todayUTC, listDailyDates } from "@/lib/daily";
+import { findWork } from "@/lib/works";
+import Link from "next/link";
+import Image from "next/image";
 
 type SearchParams = Promise<{
   category?: string;
@@ -92,8 +96,9 @@ export default async function Home({
               number="01"
               kicker="Today"
               title="Featured this morning"
-              subtitle="Three works pulled from the catalog at random — refreshes daily."
+              subtitle="Three works from the catalog. Read today's Daily Painting essay for the curatorial pick."
             />
+            <DailyTeaser />
             <HeroRotator works={hero} />
           </section>
         ) : null}
@@ -127,6 +132,52 @@ export default async function Home({
       </main>
       <SiteFooter />
     </>
+  );
+}
+
+function DailyTeaser() {
+  const today = todayUTC();
+  const dates = listDailyDates();
+  const targetDate = dates.includes(today)
+    ? today
+    : dates[0] ?? today;
+  const entry = getDaily(targetDate);
+  if (!entry) return null;
+  const work = findWork(entry.work_id);
+  if (!work) return null;
+  const snippet = entry.essay.replace(/\s+/g, " ").slice(0, 200).trim();
+  return (
+    <Link
+      href={`/daily/${targetDate}`}
+      className="group flex items-center gap-5 border border-border bg-card p-4 transition-colors hover:border-foreground"
+    >
+      <span className="relative size-20 shrink-0 overflow-hidden bg-muted">
+        {work.image_url ? (
+          <Image
+            src={work.image_url}
+            alt={work.title}
+            fill
+            sizes="80px"
+            className="object-cover"
+            unoptimized
+          />
+        ) : null}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="font-data text-[10px] uppercase tracking-[0.22em] text-primary">
+          Daily Painting · {targetDate}
+        </span>
+        <span className="mt-1 block truncate font-headline text-lg italic">
+          {work.title}
+        </span>
+        <span className="block truncate text-[13px] text-muted-foreground">
+          {snippet}…
+        </span>
+      </span>
+      <span className="hidden font-data text-[11px] uppercase tracking-[0.18em] text-muted-foreground group-hover:text-foreground sm:inline">
+        Read →
+      </span>
+    </Link>
   );
 }
 

@@ -16,6 +16,9 @@ export type Work = {
   artist_nationality?: string | null;
   copyright_notice?: string | null;
   raw_caption?: string | null;
+  dominant_hex?: string | null;
+  dominant_hsl?: { h: number; s: number; l: number } | null;
+  hue_bucket?: string | null;
 };
 
 export type WorksFile = {
@@ -193,6 +196,8 @@ export function searchAndSort(
   }
 
   switch (opts.sort) {
+    case "color":
+      return [...out].sort((a, b) => hueOf(a) - hueOf(b));
     case "year-asc":
       return [...out].sort(
         (a, b) => (parseYear(a.year) ?? 9999) - (parseYear(b.year) ?? 9999)
@@ -210,6 +215,40 @@ export function searchAndSort(
     default:
       return out;
   }
+}
+
+export function hueOf(w: Work): number {
+  return w.dominant_hsl?.h ?? 9999;
+}
+
+export function loadByHue(): Work[] {
+  return [...loadWorks()]
+    .filter((w) => w.dominant_hsl)
+    .sort((a, b) => hueOf(a) - hueOf(b));
+}
+
+export function loadHueBuckets(): { bucket: string; count: number; hex: string }[] {
+  const map = new Map<string, { count: number; sumHue: number; rep: string }>();
+  for (const w of loadWorks()) {
+    if (!w.hue_bucket || !w.dominant_hex) continue;
+    const cur = map.get(w.hue_bucket) ?? { count: 0, sumHue: 0, rep: w.dominant_hex };
+    cur.count += 1;
+    cur.sumHue += w.dominant_hsl?.h ?? 0;
+    map.set(w.hue_bucket, cur);
+  }
+  return Array.from(map.entries())
+    .map(([bucket, v]) => ({
+      bucket,
+      count: v.count,
+      hex: v.rep,
+    }))
+    .sort((a, b) => bucketOrder(a.bucket) - bucketOrder(b.bucket));
+}
+
+const BUCKET_ORDER = ["red", "orange", "yellow", "green", "teal", "blue", "purple", "pink"];
+function bucketOrder(b: string): number {
+  const i = BUCKET_ORDER.indexOf(b);
+  return i === -1 ? 99 : i;
 }
 
 export function pickRandom<T>(arr: T[], n: number, seed = 0): T[] {

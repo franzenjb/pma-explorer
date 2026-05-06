@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { WorkKeys } from "@/components/work-keys";
 import { findWork, loadWorks, neighbors } from "@/lib/works";
 
 type PageProps = {
@@ -51,6 +52,10 @@ export default async function WorkPage({ params }: PageProps) {
   return (
     <>
       <SiteHeader />
+      <WorkKeys
+        prevHref={prev ? `/work/${encodeURIComponent(prev.id)}` : null}
+        nextHref={next ? `/work/${encodeURIComponent(next.id)}` : null}
+      />
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
         <Link
           href="/"

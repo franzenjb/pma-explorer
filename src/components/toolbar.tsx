@@ -14,6 +14,7 @@ import {
 
 const SORT_OPTIONS = [
   { value: "default", label: "Curator order" },
+  { value: "color", label: "Color of Maine (hue)" },
   { value: "year-desc", label: "Year — newest first" },
   { value: "year-asc", label: "Year — oldest first" },
   { value: "artist", label: "Artist (A→Z)" },
