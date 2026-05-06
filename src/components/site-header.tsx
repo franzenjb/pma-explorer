@@ -1,34 +1,70 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/theme-toggle";
+
+const NAV = [
+  { href: "/", label: "Collection" },
+  { href: "/artists", label: "Artists" },
+  { href: "/stats", label: "Stats" },
+];
 
 export function SiteHeader() {
   return (
-    <header className="border-b border-border/70 bg-background">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-        <Link href="/" className="flex items-baseline gap-3">
-          <span className="font-headline text-2xl font-bold tracking-tight">
-            PMA Explorer
+    <header className="border-b-[3px] border-arc-black bg-card">
+      <div className="mx-auto max-w-7xl px-6 pt-8 pb-6">
+        <div className="flex items-center gap-3">
+          <Mark />
+          <span className="font-data text-[13px] font-semibold uppercase tracking-[0.18em] text-primary">
+            Portland Museum of Art
           </span>
-          <span className="hidden text-xs uppercase tracking-[0.2em] text-muted-foreground sm:inline">
-            Portland Museum of Art · Demo
-          </span>
-        </Link>
-        <nav className="flex items-center gap-6 text-sm">
-          <Link
-            href="/"
-            className="hover:text-primary transition-colors"
-          >
-            Collection
+        </div>
+        <div className="mt-1 flex items-end justify-between gap-6">
+          <Link href="/" className="block">
+            <h1 className="font-headline text-[30px] font-bold leading-tight tracking-tight">
+              PMA Explorer
+            </h1>
+            <p className="mt-1 text-[15px] text-muted-foreground">
+              A demonstration index of the museum&rsquo;s public collection.
+            </p>
           </Link>
-          <a
-            href="https://www.portlandmuseum.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-primary transition-colors"
-          >
-            portlandmuseum.org ↗
-          </a>
-        </nav>
+          <div className="flex items-center gap-2 sm:gap-5">
+            <nav className="flex items-center gap-4 text-sm sm:gap-6">
+              {NAV.map((n) => (
+                <Link
+                  key={n.href}
+                  href={n.href}
+                  className="font-semibold uppercase tracking-[0.12em] text-[12px] text-foreground hover:text-primary"
+                >
+                  {n.label}
+                </Link>
+              ))}
+              <a
+                href="https://www.portlandmuseum.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold uppercase tracking-[0.12em] text-[12px] text-muted-foreground hover:text-primary"
+              >
+                portlandmuseum.org ↗
+              </a>
+            </nav>
+            <span className="hidden h-5 w-px bg-border sm:inline-block" />
+            <ThemeToggle />
+          </div>
+        </div>
       </div>
     </header>
+  );
+}
+
+/* PMA wordmark — small italic monogram. (NOT the Red Cross mark — this is a
+ * museum demo, so we substitute a lightweight typographic mark.)
+ */
+function Mark() {
+  return (
+    <span
+      aria-hidden
+      className="inline-flex h-7 w-7 items-center justify-center bg-primary font-headline text-[13px] italic font-bold text-primary-foreground"
+    >
+      P
+    </span>
   );
 }

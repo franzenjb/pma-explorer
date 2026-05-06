@@ -10,6 +10,21 @@
   --font-sans: var(--font-body);
   --font-mono: var(--font-data);
   --font-heading: var(--font-headline);
+
+  /* Dragon Design System — exact tokens */
+  --color-arc-red: #ED1B2E;
+  --color-arc-red-deep: #c41e3a;
+  --color-arc-black: #1a1a1a;
+  --color-arc-cream: #f7f5f2;
+  --color-arc-white: #ffffff;
+  --color-arc-gray-100: #e5e5e5;
+  --color-arc-gray-300: #a3a3a3;
+  --color-arc-gray-500: #737373;
+  --color-arc-gray-700: #4a4a4a;
+  --color-arc-gray-900: #2d2d2d;
+  --color-arc-info: #1e4a6d;
+  --color-arc-success: #2d5a27;
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -39,78 +54,69 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 3px;
+  --radius-xl: 4px;
+  --radius-2xl: 4px;
+  --radius-3xl: 4px;
+  --radius-4xl: 4px;
 }
 
-/* Dragon Design System — cream background, ink foreground, surgical red accent. */
 :root {
-  --cream: oklch(0.962 0.018 91);          /* warm cream paper */
-  --cream-deep: oklch(0.935 0.022 88);     /* card surface, slightly darker */
-  --ink: oklch(0.18 0.012 60);             /* near-black warm */
-  --ink-soft: oklch(0.36 0.012 60);        /* secondary text */
-  --rule: oklch(0.83 0.01 80);             /* hairline rules */
-  --red: oklch(0.55 0.215 27);             /* surgical red accent */
-  --red-hover: oklch(0.49 0.215 27);
-
-  --background: var(--cream);
-  --foreground: var(--ink);
-  --card: var(--cream-deep);
-  --card-foreground: var(--ink);
-  --popover: var(--cream-deep);
-  --popover-foreground: var(--ink);
-  --primary: var(--red);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.92 0.014 88);
-  --secondary-foreground: var(--ink);
-  --muted: oklch(0.93 0.012 88);
-  --muted-foreground: var(--ink-soft);
-  --accent: var(--red);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: var(--red);
-  --border: var(--rule);
-  --input: var(--rule);
-  --ring: var(--red);
-  --chart-1: var(--red);
-  --chart-2: oklch(0.45 0.05 60);
-  --chart-3: oklch(0.6 0.04 80);
-  --chart-4: oklch(0.7 0.03 90);
-  --chart-5: oklch(0.3 0.02 70);
-  --radius: 0.25rem;
-  --sidebar: var(--cream-deep);
-  --sidebar-foreground: var(--ink);
-  --sidebar-primary: var(--red);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.92 0.014 88);
-  --sidebar-accent-foreground: var(--ink);
-  --sidebar-border: var(--rule);
-  --sidebar-ring: var(--red);
+  --background: #f7f5f2;             /* cream — page bg */
+  --foreground: #1a1a1a;             /* black ink */
+  --card: #ffffff;                   /* white card on cream */
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+  --primary: #ED1B2E;                /* surgical red */
+  --primary-foreground: #ffffff;
+  --secondary: #ffffff;
+  --secondary-foreground: #1a1a1a;
+  --muted: #e5e5e5;
+  --muted-foreground: #737373;
+  --accent: #1a1a1a;                 /* active filter = black, not red */
+  --accent-foreground: #ffffff;
+  --destructive: #c41e3a;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #1a1a1a;
+  --chart-1: #ED1B2E;
+  --chart-2: #1e4a6d;
+  --chart-3: #4a4a4a;
+  --chart-4: #a3a3a3;
+  --chart-5: #2d5a27;
+  --radius: 3px;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1a1a1a;
+  --sidebar-primary: #ED1B2E;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e5e5e5;
+  --sidebar-accent-foreground: #1a1a1a;
+  --sidebar-border: #e5e5e5;
+  --sidebar-ring: #1a1a1a;
 }
 
 .dark {
-  --background: oklch(0.18 0.012 60);
-  --foreground: oklch(0.962 0.018 91);
-  --card: oklch(0.22 0.012 60);
-  --card-foreground: oklch(0.962 0.018 91);
-  --popover: oklch(0.22 0.012 60);
-  --popover-foreground: oklch(0.962 0.018 91);
-  --primary: oklch(0.6 0.215 27);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.27 0.012 60);
-  --secondary-foreground: oklch(0.962 0.018 91);
-  --muted: oklch(0.27 0.012 60);
-  --muted-foreground: oklch(0.74 0.012 60);
-  --accent: oklch(0.6 0.215 27);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.6 0.215 27);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 16%);
-  --ring: oklch(0.6 0.215 27);
+  --background: #15140f;
+  --foreground: #f7f5f2;
+  --card: #1f1d18;
+  --card-foreground: #f7f5f2;
+  --popover: #1f1d18;
+  --popover-foreground: #f7f5f2;
+  --primary: #ED1B2E;
+  --primary-foreground: #ffffff;
+  --secondary: #1f1d18;
+  --secondary-foreground: #f7f5f2;
+  --muted: #2a2723;
+  --muted-foreground: #a3a3a3;
+  --accent: #f7f5f2;
+  --accent-foreground: #1a1a1a;
+  --destructive: #ED1B2E;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.14);
+  --ring: #f7f5f2;
 }
 
 @layer base {
@@ -119,25 +125,63 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-body), "Source Sans Pro", "Helvetica Neue", system-ui, sans-serif;
     font-feature-settings: "kern", "liga", "calt";
   }
   html {
     @apply font-sans;
   }
   h1, h2, h3, h4, h5, h6, .font-headline {
-    font-family: var(--font-headline), ui-serif, Georgia, serif;
-    letter-spacing: -0.01em;
+    font-family: var(--font-headline), "Libre Baskerville", Georgia, serif;
+    letter-spacing: -0.005em;
   }
   .font-data, code, kbd, pre, samp {
-    font-family: var(--font-data), ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-family: var(--font-data), "IBM Plex Mono", Consolas, monospace;
   }
 }
 
-/* Surgical red rule — used as section divider under headlines */
+/* The 40×3 red rule under section headings — Dragon canonical pattern */
 .rule-red {
   border: 0;
-  height: 2px;
-  background: var(--red);
-  width: 3rem;
+  width: 40px;
+  height: 3px;
+  background: var(--color-arc-red, #ED1B2E);
 }
+
+/* Numbered section kicker (01 / 02 / 03 in red mono) */
+.section-num {
+  font-family: var(--font-data), monospace;
+  font-size: 14px;
+  color: var(--color-arc-red, #ED1B2E);
+  letter-spacing: 0.05em;
+}
+
+/* Pill-style filter buttons */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-arc-gray-300, #a3a3a3);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: transparent;
+  color: var(--foreground);
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.pill:hover {
+  border-color: var(--foreground);
+}
+.pill[data-active="true"] {
+  background: var(--foreground);
+  color: var(--background);
+  border-color: var(--foreground);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--background); }
+::-webkit-scrollbar-thumb { background: var(--color-arc-gray-300, #a3a3a3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-arc-gray-500, #737373); }

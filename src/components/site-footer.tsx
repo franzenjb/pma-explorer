@@ -1,19 +1,53 @@
+import Link from "next/link";
 import { loadMeta } from "@/lib/works";
 
 export function SiteFooter() {
   const meta = loadMeta();
   const date = meta.scraped_at?.slice(0, 10);
   return (
-    <footer className="mt-24 border-t border-border/70 bg-background">
-      <div className="mx-auto flex max-w-7xl flex-col gap-2 px-6 py-8 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-        <p>
-          PMA Explorer is an unofficial demo. All images and metadata © Portland
-          Museum of Art and respective artists, used for non-commercial
-          demonstration purposes.
-        </p>
-        <p className="font-data">
-          {meta.count} works · scraped {date}
-        </p>
+    <footer className="mt-24 border-t-[3px] border-arc-black bg-card">
+      <div className="mx-auto grid max-w-7xl gap-6 px-6 py-10 sm:grid-cols-3">
+        <div>
+          <p className="font-data text-[10px] uppercase tracking-[0.22em] text-primary">
+            About
+          </p>
+          <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
+            PMA Explorer is an unofficial demonstration. All images and metadata
+            © Portland Museum of Art and the respective artists, used for
+            non-commercial demonstration only.
+          </p>
+        </div>
+        <div>
+          <p className="font-data text-[10px] uppercase tracking-[0.22em] text-primary">
+            Pages
+          </p>
+          <ul className="mt-2 space-y-1 text-[13px]">
+            <li><Link className="hover:text-primary" href="/">Collection</Link></li>
+            <li><Link className="hover:text-primary" href="/artists">Artists</Link></li>
+            <li><Link className="hover:text-primary" href="/stats">Stats</Link></li>
+            <li>
+              <a
+                className="hover:text-primary"
+                href="https://www.portlandmuseum.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                portlandmuseum.org ↗
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p className="font-data text-[10px] uppercase tracking-[0.22em] text-primary">
+            Build
+          </p>
+          <p className="mt-2 font-data text-[12px] text-muted-foreground">
+            {meta.count} works · scraped {date}
+          </p>
+          <p className="mt-1 font-data text-[12px] text-muted-foreground">
+            v0.2 demo
+          </p>
+        </div>
       </div>
     </footer>
   );

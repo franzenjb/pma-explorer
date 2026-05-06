@@ -32,15 +32,7 @@ function FilterChip({
   label: string;
 }) {
   return (
-    <Link
-      href={href}
-      className={
-        "border px-3 py-1 text-xs uppercase tracking-[0.16em] transition-colors " +
-        (active
-          ? "border-primary bg-primary text-primary-foreground"
-          : "border-border bg-transparent text-foreground hover:border-primary hover:text-primary")
-      }
-    >
+    <Link href={href} className="pill" data-active={active ? "true" : "false"}>
       {label}
     </Link>
   );

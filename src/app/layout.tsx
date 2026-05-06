@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Libre_Baskerville, Source_Sans_3, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const headline = Libre_Baskerville({
   variable: "--font-headline",
@@ -38,10 +39,18 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${headline.variable} ${body.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -2,41 +2,69 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { WorkCard } from "@/components/work-card";
 import { CategoryFilter } from "@/components/category-filter";
-import { loadCategories, loadWorks } from "@/lib/works";
+import { HeroRotator } from "@/components/hero-rotator";
+import { Toolbar } from "@/components/toolbar";
+import { SectionHeading } from "@/components/section-heading";
+import { StatBar } from "@/components/stat-bar";
+import {
+  loadCategories,
+  loadDecades,
+  loadWorks,
+  pickRandom,
+  searchAndSort,
+} from "@/lib/works";
 
-type SearchParams = Promise<{ category?: string }>;
+type SearchParams = Promise<{
+  category?: string;
+  q?: string;
+  sort?: string;
+  decade?: string;
+  artist?: string;
+}>;
 
 export default async function Home({
   searchParams,
 }: {
   searchParams: SearchParams;
 }) {
-  const { category } = await searchParams;
+  const sp = await searchParams;
   const works = loadWorks();
   const categories = loadCategories();
-  const filtered = category
-    ? works.filter((w) => w.category === category)
-    : works;
+  const decades = loadDecades();
+
+  const filtered = searchAndSort(works, sp);
+  const hasFilter =
+    Boolean(sp.q) ||
+    Boolean(sp.category) ||
+    Boolean(sp.decade) ||
+    Boolean(sp.artist);
+
+  const today = new Date();
+  const seed =
+    today.getUTCFullYear() * 10000 +
+    (today.getUTCMonth() + 1) * 100 +
+    today.getUTCDate();
+  const hero = hasFilter ? [] : pickRandom(works, 3, seed);
+
+  const earliest = decades[0]?.sortKey ?? null;
+  const latest = decades[decades.length - 1]?.sortKey ?? null;
 
   return (
     <>
       <SiteHeader />
       <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-12">
-        <section className="border-b border-border/60 pb-10">
-          <p className="font-data text-xs uppercase tracking-[0.22em] text-muted-foreground">
-            A demonstration collection explorer
-          </p>
-          <h1 className="mt-3 max-w-3xl font-headline text-5xl leading-[1.05] tracking-tight sm:text-6xl">
+        <section className="border-b border-border pb-12">
+          <hr className="rule-red" />
+          <h2 className="mt-3 max-w-3xl font-headline text-5xl leading-[1.05] tracking-tight sm:text-6xl">
             Featured works from the{" "}
             <em className="text-primary">Portland Museum of Art</em>.
-          </h1>
-          <hr className="rule-red mt-6" />
+          </h2>
           <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground">
             A small, fast browse of paintings, photographs, decorative arts, and
             modern works highlighted on the museum&rsquo;s public collection
             page. This demo pulls from{" "}
             <a
-              className="border-b border-primary/60 text-foreground hover:text-primary"
+              className="border-b border-primary text-foreground hover:text-primary"
               href="https://www.portlandmuseum.org/collection/"
               target="_blank"
               rel="noopener noreferrer"
@@ -45,16 +73,50 @@ export default async function Home({
             </a>{" "}
             and is the proof-of-concept for a full 22,000-object index.
           </p>
+          <StatBar
+            stats={[
+              { label: "Works in demo", value: works.length, accent: true },
+              { label: "Categories", value: categories.length },
+              {
+                label: "Date range",
+                value: earliest && latest ? `${earliest}–${latest}` : "—",
+              },
+              { label: "Artists", value: countArtists(works) },
+            ]}
+          />
         </section>
 
-        <section className="py-8">
-          <CategoryFilter categories={categories} active={category ?? null} />
+        {hero.length > 0 ? (
+          <section className="space-y-6 pt-12">
+            <SectionHeading
+              number="01"
+              kicker="Today"
+              title="Featured this morning"
+              subtitle="Three works pulled from the catalog at random — refreshes daily."
+            />
+            <HeroRotator works={hero} />
+          </section>
+        ) : null}
+
+        <section className="space-y-6 pt-12">
+          <SectionHeading
+            number="02"
+            kicker="Browse"
+            title={
+              hasFilter
+                ? `${filtered.length} of ${works.length} works`
+                : "The full demo collection"
+            }
+            subtitle="Search by title, artist, medium, or accession number. Sort to compare across centuries."
+          />
+          <Toolbar totalCount={works.length} />
+          <CategoryFilter categories={categories} active={sp.category ?? null} />
         </section>
 
         {filtered.length === 0 ? (
           <EmptyState />
         ) : (
-          <ul className="grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:grid-cols-4">
+          <ul className="mt-10 grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:grid-cols-4">
             {filtered.map((work) => (
               <li key={work.id}>
                 <WorkCard work={work} />
@@ -68,17 +130,19 @@ export default async function Home({
   );
 }
 
+function countArtists(works: { artist: string | null }[]) {
+  const set = new Set<string>();
+  for (const w of works) if (w.artist) set.add(w.artist);
+  return set.size;
+}
+
 function EmptyState() {
   return (
-    <div className="border border-dashed border-border p-12 text-center">
-      <h2 className="font-headline text-2xl">No works yet</h2>
+    <div className="mt-10 border border-dashed border-border p-12 text-center">
+      <h2 className="font-headline text-2xl">No matches</h2>
       <p className="mt-3 text-sm text-muted-foreground">
-        Run the scraper to populate{" "}
-        <code className="font-data text-[12px]">data/works.json</code>:
+        Try a different search term or clear the filters.
       </p>
-      <pre className="mx-auto mt-4 inline-block bg-muted px-4 py-2 text-left text-xs">
-        <code className="font-data">python scripts/scrape_pma.py</code>
-      </pre>
     </div>
   );
 }
