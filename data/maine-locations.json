@@ -1,0 +1,54 @@
+{
+  "_note": "Hand-curated GPS coordinates for works whose subject is a recognizable Maine location. Each entry pairs a work id with a place and the lat/lng of that place. Demonstration data — not authoritative.",
+  "pins": [
+    {
+      "work_id": "1988.55.1",
+      "place": "Prout's Neck, Scarborough",
+      "lat": 43.5550,
+      "lng": -70.3303,
+      "note": "Winslow Homer painted along the rocks at Prout's Neck for 25 years."
+    },
+    {
+      "work_id": "1996.38.29",
+      "place": "Castine, Penobscot Bay",
+      "lat": 44.3878,
+      "lng": -68.7989,
+      "note": "Fitz Henry Lane's luminist view of the harbor."
+    },
+    {
+      "work_id": "1996.38.63",
+      "place": "Dark Harbor, Islesboro",
+      "lat": 44.2828,
+      "lng": -68.9123,
+      "note": "N. C. Wyeth's fishermen on Islesboro."
+    },
+    {
+      "work_id": "1996.38.1",
+      "place": "Matinicus Isle",
+      "lat": 43.8694,
+      "lng": -68.8908,
+      "note": "Bellows summered on the island in 1916."
+    },
+    {
+      "work_id": "1998.96",
+      "place": "Mount Katahdin, Millinocket",
+      "lat": 45.9044,
+      "lng": -68.9211,
+      "note": "Frederic Edwin Church's Hudson River School view of Maine's highest peak."
+    },
+    {
+      "work_id": "2014.15.4",
+      "place": "Mount Desert Island",
+      "lat": 44.3386,
+      "lng": -68.2733,
+      "note": "Eliot Porter's tidal marsh, August 1965."
+    },
+    {
+      "work_id": "1976.12",
+      "place": "Portland Observatory, Munjoy Hill",
+      "lat": 43.6739,
+      "lng": -70.2453,
+      "note": "Signal pitcher made for Portland's signal tower."
+    }
+  ]
+}

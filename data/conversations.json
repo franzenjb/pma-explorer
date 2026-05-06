@@ -1,0 +1,29 @@
+{
+  "_note": "Hand-curated weekly pairings. Each pair is two works that argue, echo, or rhyme with each other. Dialogue text is editorial placeholder until the curator (or a tuned LLM) writes real entries.",
+  "pairings": [
+    {
+      "week": "2026-W19",
+      "title": "Rocks vs. wreckage",
+      "subtitle": "Homer's grim Atlantic next to Lane's still harbor.",
+      "left_id": "1988.55.1",
+      "right_id": "1996.38.29",
+      "dialogue": "Two views of the same coast, ninety years apart. Lane gives Castine the glassy clarity of a dream — every spar, every roof, every reflection accounted for. Homer gives Prout's Neck the opposite: rock against ocean, ocean against rock, no human in the frame. Look at the horizons. Lane's is straight as a ruler. Homer's is somewhere behind the spray. The 1850s wanted Maine to be legible. The 1890s wanted it to be elemental. Both paintings are still here, in the same building, asking the visitor which Maine they came for."
+    },
+    {
+      "week": "2026-W18",
+      "title": "Mountain & marsh",
+      "subtitle": "Church's Katahdin against Porter's tidal flat.",
+      "left_id": "1998.96",
+      "right_id": "2014.15.4",
+      "dialogue": "Church paints upward — the whole composition climbs. The viewer's eye starts in the foreground camp, walks across the river, climbs through the trees, lifts to the granite summit. Porter, a century later, paints flat. The horizon is a line halfway up the print and the foreground is a tangle of grass at the edge of a tidal pool. Both artists are recording Maine, and both are honest, but the verticality of the 1890s has been replaced by horizontal attention. Modernism teaches you to look down at what is under your feet."
+    },
+    {
+      "week": "2026-W17",
+      "title": "Two islands, two crowds",
+      "subtitle": "Bellows on Matinicus, N. C. Wyeth at Dark Harbor.",
+      "left_id": "1996.38.1",
+      "right_id": "1996.38.63",
+      "dialogue": "Bellows arrives at Matinicus in 1916 as a visitor. The figures are loose, the brush is hot, the island is scenery. Wyeth, working three islands over and a generation later, paints the fishermen as labor — the dory, the catch, the muscles. Same archipelago, same light, different argument about what Maine is for. The PMA hangs them in the same gallery on purpose."
+    }
+  ]
+}

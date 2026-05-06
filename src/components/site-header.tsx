@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Dices } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { CommandPalette } from "@/components/command-palette";
 import { KeyboardShortcuts } from "@/components/keyboard-shortcuts";
@@ -7,10 +8,13 @@ import { loadWorks } from "@/lib/works";
 const NAV = [
   { href: "/", label: "Collection" },
   { href: "/color", label: "Color" },
+  { href: "/map", label: "Map" },
   { href: "/artists", label: "Artists" },
   { href: "/compare", label: "Compare" },
   { href: "/daily", label: "Daily" },
+  { href: "/conversation", label: "Pairing" },
   { href: "/stats", label: "Stats" },
+  { href: "/my-collection", label: "Saved" },
 ];
 
 export function SiteHeader() {
@@ -54,6 +58,15 @@ export function SiteHeader() {
                 portlandmuseum.org ↗
               </a>
             </nav>
+            <Link
+              href="/random"
+              prefetch={false}
+              className="inline-flex h-8 w-8 items-center justify-center border border-border bg-card text-muted-foreground hover:border-foreground hover:text-foreground"
+              aria-label="Random work"
+              title="Random work"
+            >
+              <Dices className="size-4" />
+            </Link>
             <span className="hidden h-5 w-px bg-border sm:inline-block" />
             <KeyboardShortcuts />
             <ThemeToggle />

@@ -6,6 +6,7 @@ import { HeroRotator } from "@/components/hero-rotator";
 import { Toolbar } from "@/components/toolbar";
 import { SectionHeading } from "@/components/section-heading";
 import { StatBar } from "@/components/stat-bar";
+import { DecadeScrubber } from "@/components/decade-scrubber";
 import {
   loadCategories,
   loadDecades,
@@ -116,6 +117,11 @@ export default async function Home({
           />
           <Toolbar totalCount={works.length} />
           <CategoryFilter categories={categories} active={sp.category ?? null} />
+          <DecadeScrubber
+            decades={decades}
+            active={sp.decade ?? null}
+            preserve={sp}
+          />
         </section>
 
         {filtered.length === 0 ? (

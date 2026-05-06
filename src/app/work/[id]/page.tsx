@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { WorkKeys } from "@/components/work-keys";
+import { FavoriteButton } from "@/components/favorite-button";
 import { findWork, loadWorks, neighbors } from "@/lib/works";
 
 type PageProps = {
@@ -114,6 +115,7 @@ export default async function WorkPage({ params }: PageProps) {
             </dl>
 
             <div className="mt-8 flex flex-wrap gap-3">
+              <FavoriteButton id={work.id} />
               {work.accession_number ? (
                 <a
                   href={`https://collections.portlandmuseum.org/kiosk/search.htm?q=${encodeURIComponent(work.accession_number)}`}

@@ -31,10 +31,14 @@ const GROUPS: Group[] = [
     rows: [
       { keys: ["g", "h"], label: "Home / collection" },
       { keys: ["g", "c"], label: "Color of Maine" },
+      { keys: ["g", "m"], label: "Map" },
       { keys: ["g", "a"], label: "Artists A→Z" },
       { keys: ["g", "x"], label: "Compare" },
       { keys: ["g", "d"], label: "Daily Painting" },
+      { keys: ["g", "p"], label: "Pairing (Two works)" },
       { keys: ["g", "s"], label: "Stats" },
+      { keys: ["g", "f"], label: "Saved (favorites)" },
+      { keys: ["g", "r"], label: "Random work" },
     ],
   },
   {
@@ -52,10 +56,14 @@ const GROUPS: Group[] = [
 const ROUTES: Record<string, string> = {
   h: "/",
   c: "/color",
+  m: "/map",
   a: "/artists",
   x: "/compare",
   d: "/daily",
+  p: "/conversation",
   s: "/stats",
+  f: "/my-collection",
+  r: "/random",
 };
 
 function isTypingTarget(el: EventTarget | null): boolean {
