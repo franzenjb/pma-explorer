@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { CommandPalette } from "@/components/command-palette";
+import { KeyboardShortcuts } from "@/components/keyboard-shortcuts";
 import { loadWorks } from "@/lib/works";
 
 const NAV = [
@@ -54,6 +55,7 @@ export function SiteHeader() {
               </a>
             </nav>
             <span className="hidden h-5 w-px bg-border sm:inline-block" />
+            <KeyboardShortcuts />
             <ThemeToggle />
           </div>
         </div>

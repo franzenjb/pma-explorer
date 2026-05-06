@@ -45,7 +45,13 @@ export function SiteFooter() {
             {meta.count} works · scraped {date}
           </p>
           <p className="mt-1 font-data text-[12px] text-muted-foreground">
-            v0.2 demo
+            v0.3 demo
+          </p>
+          <p className="mt-3 font-data text-[12px] text-muted-foreground">
+            Questions →{" "}
+            <a className="hover:text-primary" href="mailto:jbf@jbf.com">
+              jbf@jbf.com
+            </a>
           </p>
         </div>
       </div>
