@@ -45,10 +45,7 @@ export function HeroCarousel({ works, intervalMs = 7000 }: Props) {
                 fill
                 priority={i === 0}
                 sizes="100vw"
-                className={
-                  "object-cover " +
-                  (i === active ? "animate-kenburns" : "")
-                }
+                className="object-cover animate-kenburns"
                 unoptimized
               />
             ) : null}
