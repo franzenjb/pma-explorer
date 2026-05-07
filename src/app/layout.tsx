@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import {
-  Barlow,
+  Public_Sans,
   Barlow_Condensed,
   Libre_Baskerville,
   IBM_Plex_Mono,
@@ -8,15 +8,18 @@ import {
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
-// Body — closest free Google match for URW DIN used across portlandmuseum.org
-const body = Barlow({
+// Body — Public Sans is the closest free Google match for URW DIN used
+// across portlandmuseum.org. Same humanist-geometric balance, open
+// apertures, slightly higher x-height than Barlow.
+const body = Public_Sans({
   variable: "--font-body",
   weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
   display: "swap",
 });
 
-// Headlines — closest free Google match for urw-din-condensed used by PMA's H1
+// Headlines — Barlow Condensed remains the closest free match for
+// urw-din-condensed used by PMA's H1 / hero.
 const headline = Barlow_Condensed({
   variable: "--font-headline",
   weight: ["400", "500", "600", "700"],

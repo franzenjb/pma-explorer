@@ -31,33 +31,28 @@ export function MaineMap({ pins }: { pins: MainePin[] }) {
     let mounted = true;
     import("leaflet").then((L) => {
       if (!mounted) return;
-      // Stylized painter's palette pin — kidney-shaped wood palette with
-      // a thumb-hole and four paint dabs (PMA red, ochre, slate blue,
-      // pine green). Thin black stem drops to the exact lat/lng so the
-      // pin reads as a marker, not a sticker.
+      // Painter's palette pin — kidney path with thumb cutout, four paint
+      // dabs + a white aperture for the active spot. Ported from V2 (Codex)
+      // with PMA palette colors. Soft drop shadow keeps the pin legible
+      // on the cream Positron basemap.
       setPmaIcon(
         L.divIcon({
-          className: "pma-pin",
-          iconSize: [30, 34],
-          iconAnchor: [15, 33],
-          popupAnchor: [0, -30],
-          html: [
-            '<svg viewBox="0 0 30 34" width="30" height="34" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="filter:drop-shadow(0 1px 1px rgba(0,0,0,.18))">',
-            // Stem
-            '<line x1="15" y1="22" x2="15" y2="33" stroke="#1a1a1a" stroke-width="1.2" stroke-linecap="square"/>',
-            // Palette body — warm cream with ink outline
-            '<ellipse cx="15" cy="11" rx="13" ry="9" fill="#faf3e6" stroke="#1a1a1a" stroke-width="1.4"/>',
-            // Thumb hole
-            '<ellipse cx="7.5" cy="11" rx="2" ry="2.6" fill="#1a1a1a" opacity="0.12"/>',
-            '<ellipse cx="7.5" cy="11" rx="2" ry="2.6" fill="none" stroke="#1a1a1a" stroke-width="0.9"/>',
-            // Paint dabs (PMA red, ochre, slate blue, pine green, plum)
-            '<circle cx="15" cy="5.2" r="1.5" fill="#df1924"/>',
-            '<circle cx="20" cy="7.5" r="1.4" fill="#e3c93c"/>',
-            '<circle cx="22" cy="12.5" r="1.4" fill="#4b8da4"/>',
-            '<circle cx="18" cy="16.5" r="1.4" fill="#3a8a64"/>',
-            '<circle cx="13" cy="17" r="1.3" fill="#a13e8a"/>',
+          className: "pma-palette-marker",
+          iconSize: [38, 34],
+          iconAnchor: [19, 17],
+          popupAnchor: [0, -18],
+          html:
+            '<svg viewBox="0 0 38 34" width="38" height="34" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="filter: drop-shadow(0 5px 12px rgba(0,0,0,.22))">' +
+            // Kidney palette body with thumb cutout
+            '<path d="M20 1.5C9.8 1.5 2.5 8.4 2.5 17.2c0 8.1 6.7 14.5 15.9 14.5h3.3c2.6 0 4.2-2.8 2.8-5-.7-1.1-.1-2.5 1.2-2.6l3.2-.2c4-.3 6.6-3.4 6.6-7.1 0-8.3-6.4-15.3-15.5-15.3Z" fill="rgba(255,255,255,.96)" stroke="#111111" stroke-width="1.1"/>' +
+            // Paint dabs
+            '<circle cx="12.2" cy="13.2" r="2.5" fill="#4b8da4"/>' +
+            '<circle cx="19.2" cy="9.5" r="2.5" fill="#f76a0c"/>' +
+            '<circle cx="26.4" cy="13.4" r="2.5" fill="#df1924"/>' +
+            '<circle cx="16.1" cy="20.7" r="2.5" fill="#111111"/>' +
+            // White aperture (active dab)
+            '<circle cx="26.4" cy="21.3" r="3.2" fill="#ffffff" stroke="#111111" stroke-width="1"/>' +
             "</svg>",
-          ].join(""),
         })
       );
     });
@@ -76,20 +71,21 @@ export function MaineMap({ pins }: { pins: MainePin[] }) {
   }, [pins]);
 
   return (
-    <div className="relative h-[520px] w-full overflow-hidden border border-border bg-muted">
+    <div className="relative h-[520px] w-full overflow-hidden border border-border bg-[#f4f1ec] [&_.leaflet-control-attribution]:font-data [&_.leaflet-control-attribution]:text-[10px] [&_.leaflet-popup-content-wrapper]:rounded-none [&_.leaflet-popup-content-wrapper]:border [&_.leaflet-popup-content-wrapper]:border-border [&_.leaflet-popup-content-wrapper]:shadow-xl [&_.leaflet-popup-content]:m-4">
       <MapContainer
         center={center}
         zoom={7}
         scrollWheelZoom={false}
         style={{ height: "100%", width: "100%" }}
       >
-        {/* CARTO Voyager — soft, editorial cartography. Free, no API
-         * key required, much closer to a painter's wash than the harsh
-         * default OSM raster.
+        {/* CARTO Positron (light_all) — minimal cream/grey editorial
+         * cartography. Free, no API key. Sits quiet beneath the pins so
+         * the painter palette + the work imagery in popups carry the
+         * visual weight.
          */}
         <TileLayer
-          attribution='Tiles &copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a> · Data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors'
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
           subdomains="abcd"
           maxZoom={19}
         />
