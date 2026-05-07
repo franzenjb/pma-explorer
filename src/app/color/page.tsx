@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { SectionHeading } from "@/components/section-heading";
 import { loadByHue, loadHueBuckets, loadWorks } from "@/lib/works";
 
 export const metadata = {
@@ -28,27 +27,59 @@ export default async function ColorPage({
   const visible = active
     ? allSorted.filter((w) => w.hue_bucket?.toLowerCase() === active)
     : allSorted;
+  const activeBucket = active
+    ? buckets.find((b) => b.bucket.toLowerCase() === active) ?? null
+    : null;
 
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-12">
-        <SectionHeading
-          number="00"
-          kicker="Pure looking"
-          title={<>The <span className="text-primary">Color of Maine</span>.</>}
-          subtitle="Every work in the collection sorted by dominant hue. Pick a bucket below to drill in; pick another to switch. Click any tile to open the work."
-        />
-
-        {/* Sticky color filter ribbon — always visible while you browse the mosaic */}
-        <div className="sticky top-0 z-30 -mx-6 mt-8 border-y border-border bg-background/95 px-6 py-4 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 sm:px-6">
+        {/* Sticky color filter ribbon — page's first element so nothing
+         * pushes it off screen. top offset clears the slim mobile header
+         * (~52px); on lg+ the SiteHeader is static so top-0 is fine.
+         */}
+        <div className="sticky top-[52px] z-30 -mx-4 border-b border-border bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/85 sm:-mx-6 sm:px-6 sm:py-4 lg:top-0">
           <div className="space-y-3">
+            <div className="flex items-end justify-between gap-4">
+              <div className="min-w-0">
+                <p className="font-data text-[10px] uppercase tracking-[0.22em] text-primary">
+                  Color of Maine
+                </p>
+                <h1 className="mt-1 flex items-center gap-3 truncate font-headline text-3xl font-semibold uppercase leading-none tracking-tight sm:text-4xl">
+                  {activeBucket ? (
+                    <>
+                      <span
+                        aria-hidden
+                        className="inline-block size-7 shrink-0 sm:size-9"
+                        style={{ background: activeBucket.hex }}
+                      />
+                      <span>{activeBucket.bucket}</span>
+                    </>
+                  ) : (
+                    <span>Every hue</span>
+                  )}
+                </h1>
+              </div>
+              <div className="shrink-0 text-right">
+                <p className="font-data text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                  {activeBucket ? "Showing" : "Tagged"}
+                </p>
+                <p className="font-data text-2xl font-medium leading-none text-primary sm:text-3xl">
+                  {activeBucket ? activeBucket.count : covered}
+                </p>
+                <p className="mt-1 font-data text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                  / {total}
+                </p>
+              </div>
+            </div>
+
             {/* Continuous hue strip — every work as one slice */}
-            <div className="flex h-9 w-full overflow-hidden rounded-sm">
+            <div className="flex h-8 w-full overflow-hidden rounded-sm sm:h-9">
               {allSorted.map((w) => {
                 const dim =
                   active && w.hue_bucket?.toLowerCase() !== active
-                    ? "opacity-30"
+                    ? "opacity-25"
                     : "opacity-100";
                 return (
                   <Link
@@ -58,7 +89,7 @@ export default async function ColorPage({
                     aria-label={w.title}
                     style={{ background: w.dominant_hex ?? "transparent" }}
                     className={
-                      "block flex-1 transition-all duration-200 hover:scale-y-150 " +
+                      "block flex-1 transition-all duration-200 hover:scale-y-125 " +
                       dim
                     }
                   />
@@ -67,10 +98,9 @@ export default async function ColorPage({
             </div>
 
             {/* Bucket pills — click to filter, click again to clear */}
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1">
               <BucketChip
                 href="/color"
-                hex="transparent"
                 label="All"
                 count={covered}
                 active={!active}
@@ -92,25 +122,28 @@ export default async function ColorPage({
                   />
                 );
               })}
-              <span className="ml-auto font-data text-[11px] text-muted-foreground">
-                {active
-                  ? `${visible.length} ${active} ${visible.length === 1 ? "work" : "works"}`
-                  : `${covered} / ${total} works tagged`}
-              </span>
+              {active ? (
+                <Link
+                  href="/color"
+                  className="ml-auto shrink-0 font-data text-[10px] uppercase tracking-[0.18em] text-primary hover:underline"
+                >
+                  Clear ✕
+                </Link>
+              ) : null}
             </div>
           </div>
         </div>
 
         {/* Mosaic — square tiles, color-sorted */}
         {visible.length === 0 ? (
-          <div className="mt-10 border border-dashed border-border p-12 text-center">
+          <div className="my-10 border border-dashed border-border p-12 text-center">
             <h2 className="font-headline text-2xl">No works in this hue</h2>
             <p className="mt-3 text-sm text-muted-foreground">
               Pick another color above.
             </p>
           </div>
         ) : (
-          <ul className="mt-10 grid grid-cols-3 gap-1 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-9">
+          <ul className="grid grid-cols-3 gap-1 py-4 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-9">
             {visible.map((w) => (
               <li key={w.id}>
                 <Link
@@ -157,7 +190,7 @@ function BucketChip({
   isAll,
 }: {
   href: string;
-  hex: string;
+  hex?: string;
   label: string;
   count: number;
   active: boolean;
@@ -168,7 +201,7 @@ function BucketChip({
       href={href}
       aria-pressed={active}
       className={
-        "inline-flex items-center gap-2 border px-2.5 py-1 text-[12px] transition-colors " +
+        "inline-flex h-8 shrink-0 items-center gap-2 border px-2.5 text-[12px] transition-colors " +
         (active
           ? "border-foreground bg-foreground text-background"
           : "border-border bg-card text-foreground hover:border-foreground")
@@ -179,12 +212,12 @@ function BucketChip({
         className={
           "block size-3 rounded-sm " + (isAll ? "border border-border" : "")
         }
-        style={{ background: hex }}
+        style={{ background: hex ?? "transparent" }}
       />
       <span className="font-data uppercase tracking-[0.18em]">{label}</span>
       <span
         className={
-          "font-data " + (active ? "text-background/70" : "text-muted-foreground")
+          "font-data " + (active ? "text-background/75" : "text-muted-foreground")
         }
       >
         {count}
