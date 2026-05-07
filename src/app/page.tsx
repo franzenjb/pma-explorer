@@ -1,7 +1,8 @@
+import Image from "next/image";
+import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { HeroRotator } from "@/components/hero-rotator";
-import { CollectionReel } from "@/components/collection-reel";
 import { SectionHeading } from "@/components/section-heading";
 import { StatBar } from "@/components/stat-bar";
 import { CollectionBrowser } from "@/components/collection-browser";
@@ -13,8 +14,6 @@ import {
 } from "@/lib/works";
 import { getDaily, todayUTC, listDailyDates } from "@/lib/daily";
 import { findWork } from "@/lib/works";
-import Link from "next/link";
-import Image from "next/image";
 
 type SearchParams = Promise<{
   category?: string;
@@ -46,16 +45,18 @@ export default async function Home({
     (today.getUTCMonth() + 1) * 100 +
     today.getUTCDate();
   const hero = hasFilter ? [] : pickRandom(works, 3, seed);
-  const reel = pickRandom(works, 8, seed + 220);
 
   const earliest = decades[0]?.sortKey ?? null;
   const latest = decades[decades.length - 1]?.sortKey ?? null;
 
   return (
     <>
-      {hasFilter ? <SearchHeader /> : <SiteHeader />}
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-3 sm:px-6 sm:py-6">
-        <section id="collection" className="scroll-mt-2">
+      <SiteHeader />
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 sm:px-6">
+        {/* Collection browser is the page's first feature — sticky filter
+         * ribbon pins to viewport top so search/filter is always reachable.
+         */}
+        <section id="collection" className="pt-4 sm:pt-6">
           <CollectionBrowser
             works={works}
             categories={categories}
@@ -66,22 +67,30 @@ export default async function Home({
 
         {!hasFilter ? (
           <>
-            <section className="pt-12">
-              <CollectionReel works={reel} />
+            <section className="border-t border-border pt-12">
+              <SectionHeading
+                number="01"
+                kicker="Today"
+                title="Featured this morning"
+                subtitle="Three works from the catalog. Read today's Daily Painting essay for the curatorial pick."
+              />
+              <div className="mt-6">
+                <DailyTeaser />
+              </div>
+              <div className="mt-6">
+                <HeroRotator works={hero} />
+              </div>
             </section>
 
-            <section className="border-b border-border py-12">
-              <hr className="rule-red" />
-              <h2 className="mt-4 max-w-4xl font-headline text-[48px] font-semibold uppercase leading-[0.98] tracking-tight sm:text-[74px]">
-                Browse PMA by{" "}
-                <span className="text-primary">work, color, place, and time</span>.
-              </h2>
-              <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground">
-                A fast, editorial collection surface for paintings, photographs,
-                decorative arts, and modern works highlighted on the museum&rsquo;s
-                public collection page. This Codex v2 concept keeps the PMA palette
-                and Barlow type system, then adds a restrained motion layer powered
-                by React composition. Source data comes from{" "}
+            <section className="border-t border-border py-12">
+              <SectionHeading
+                number="02"
+                kicker="About this demo"
+                title="Featured works from the Portland Museum of Art"
+                subtitle="A small, fast browse of paintings, photographs, decorative arts, and modern works highlighted on the museum's public collection page. Proof-of-concept for a full 22,000-object index."
+              />
+              <p className="mt-6 max-w-3xl text-base leading-7 text-muted-foreground">
+                Source data scraped from{" "}
                 <a
                   className="border-b border-primary text-foreground hover:text-primary"
                   href="https://www.portlandmuseum.org/collection/"
@@ -89,8 +98,11 @@ export default async function Home({
                   rel="noopener noreferrer"
                 >
                   portlandmuseum.org/collection
-                </a>{" "}
-                and is the proof-of-concept for a full 22,000-object index.
+                </a>
+                . This is the Claude V1 build — design language pulls Barlow
+                Condensed headlines, IBM Plex Mono for data, surgical PMA red,
+                and a sticky filter ribbon that follows the user as they
+                browse.
               </p>
               <StatBar
                 stats={[
@@ -104,17 +116,6 @@ export default async function Home({
                 ]}
               />
             </section>
-
-            <section className="space-y-6 pt-12">
-            <SectionHeading
-              number="02"
-              kicker="Today"
-              title="Featured this morning"
-              subtitle="Three works from the catalog. Read today's Daily Painting essay for the curatorial pick."
-            />
-            <DailyTeaser />
-            <HeroRotator works={hero} />
-            </section>
           </>
         ) : null}
       </main>
@@ -123,43 +124,10 @@ export default async function Home({
   );
 }
 
-function SearchHeader() {
-  return (
-    <header className="border-b border-border bg-card">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
-        <Link href="/" className="flex min-w-0 items-center gap-3">
-          <span
-            aria-hidden
-            className="inline-flex h-7 w-7 shrink-0 items-center justify-center bg-primary font-headline text-[14px] font-semibold uppercase text-primary-foreground"
-          >
-            P
-          </span>
-          <span className="min-w-0">
-            <span className="block truncate font-headline text-2xl font-semibold uppercase leading-none">
-              PMA Explorer
-            </span>
-            <span className="mt-1 block font-data text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-              Search mode
-            </span>
-          </span>
-        </Link>
-        <Link
-          href="/"
-          className="shrink-0 font-data text-[10px] uppercase tracking-[0.18em] text-primary hover:underline"
-        >
-          Exit
-        </Link>
-      </div>
-    </header>
-  );
-}
-
 function DailyTeaser() {
   const today = todayUTC();
   const dates = listDailyDates();
-  const targetDate = dates.includes(today)
-    ? today
-    : dates[0] ?? today;
+  const targetDate = dates.includes(today) ? today : dates[0] ?? today;
   const entry = getDaily(targetDate);
   if (!entry) return null;
   const work = findWork(entry.work_id);
