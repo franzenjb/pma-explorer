@@ -31,19 +31,29 @@ export function MaineMap({ pins }: { pins: MainePin[] }) {
     let mounted = true;
     import("leaflet").then((L) => {
       if (!mounted) return;
-      // Leaflet's default marker images aren't bundled by Next, so we render
-      // the pin as inline SVG via a DivIcon. PMA red pin with a white dot.
+      // Editorial museum-grade pin: a thin black stem rising from the
+      // exact lat/lng, capped by an ink ring around a PMA-red disc with
+      // a small white aperture at the centre. No drop shadow, no
+      // gradient — flat, geometric, designed for reading next to a
+      // serif page headline.
       setPmaIcon(
         L.divIcon({
           className: "pma-pin",
-          iconSize: [22, 28],
-          iconAnchor: [11, 28],
-          popupAnchor: [0, -26],
-          html:
-            '<svg viewBox="0 0 22 28" width="22" height="28" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 1px 1px rgba(0,0,0,.35))">' +
-            '<path d="M11 0C5 0 0 4.5 0 10.5 0 18 11 28 11 28S22 18 22 10.5C22 4.5 17 0 11 0Z" fill="#df1924"/>' +
-            '<circle cx="11" cy="10.5" r="4" fill="#ffffff"/>' +
+          iconSize: [16, 22],
+          iconAnchor: [8, 21],
+          popupAnchor: [0, -20],
+          html: [
+            '<svg viewBox="0 0 16 22" width="16" height="22" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">',
+            // Stem: 1px black line from base of disc to the anchor point
+            '<line x1="8" y1="14" x2="8" y2="21" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="square"/>',
+            // Ink ring (acts as the outline)
+            '<circle cx="8" cy="8" r="7" fill="#1a1a1a"/>',
+            // PMA red disc
+            '<circle cx="8" cy="8" r="5.5" fill="#df1924"/>',
+            // White centre aperture
+            '<circle cx="8" cy="8" r="1.6" fill="#ffffff"/>',
             "</svg>",
+          ].join(""),
         })
       );
     });
