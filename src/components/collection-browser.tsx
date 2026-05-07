@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { SlidersHorizontal, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { WorkCard } from "@/components/work-card";
 import { Input } from "@/components/ui/input";
 import {
@@ -45,7 +45,6 @@ export function CollectionBrowser({ works, categories, decades, initial }: Props
   const [sort, setSort] = useState(initial.sort ?? "default");
   const [category, setCategory] = useState<string | null>(initial.category ?? null);
   const [decade, setDecade] = useState<string | null>(initial.decade ?? null);
-  const [filtersOpen, setFiltersOpen] = useState(false);
   const artist = initial.artist ?? null;
 
   // In-memory filter on every keystroke. No round-trip.
@@ -87,7 +86,9 @@ export function CollectionBrowser({ works, categories, decades, initial }: Props
   const showingCount = filtered.length;
   const hasFilter = Boolean(q) || Boolean(category) || Boolean(decade) || Boolean(artist);
   const activeFilterCount = [category, decade, artist].filter(Boolean).length;
-  const showFullFilters = filtersOpen || !hasFilter;
+  // Always show category pills + decade scrubber so the user can see and
+  // change their filter without it collapsing on selection.
+  const showFullFilters = true;
 
   return (
     <div className="space-y-5">
@@ -98,15 +99,11 @@ export function CollectionBrowser({ works, categories, decades, initial }: Props
               {hasFilter ? `${showingCount} of ${total}` : `${total} works`}
             </p>
             <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setFiltersOpen((open) => !open)}
-                className="inline-flex h-8 items-center gap-2 border border-border px-3 font-data text-[10px] uppercase tracking-[0.16em] text-muted-foreground hover:border-foreground hover:text-foreground"
-                aria-expanded={showFullFilters}
-              >
-                <SlidersHorizontal className="size-3.5" />
-                Filters{activeFilterCount ? ` ${activeFilterCount}` : ""}
-              </button>
+              {activeFilterCount ? (
+                <span className="font-data text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                  {activeFilterCount} filter{activeFilterCount === 1 ? "" : "s"}
+                </span>
+              ) : null}
               {hasFilter ? (
                 <button
                   type="button"
@@ -115,7 +112,6 @@ export function CollectionBrowser({ works, categories, decades, initial }: Props
                     setCategory(null);
                     setDecade(null);
                     setSort("default");
-                    setFiltersOpen(false);
                   }}
                   className="font-data text-[10px] uppercase tracking-[0.18em] text-primary hover:underline"
                 >
@@ -343,7 +339,7 @@ function DecadeScrubberLive({
               title={`${d.decade} · ${d.count} ${d.count === 1 ? "work" : "works"}`}
               aria-label={`${d.decade}, ${d.count} works`}
               aria-pressed={isActive}
-              className="group relative block h-16 cursor-pointer bg-transparent sm:h-24"
+              className="group relative block h-20 cursor-pointer bg-transparent sm:h-28 lg:h-32"
             >
               <span
                 className="absolute bottom-0 left-0 right-0 transition-colors"
