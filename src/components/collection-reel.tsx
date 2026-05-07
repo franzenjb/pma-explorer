@@ -17,7 +17,8 @@ type ReelWork = Pick<
 >;
 
 const FPS = 30;
-const FRAMES_PER_WORK = 105; // 3.5 seconds at 30fps.
+const FRAMES_PER_WORK = 120; // 4 seconds at 30fps.
+const CROSSFADE_FRAMES = 12;
 const MAX_REEL_WORKS = 8;
 
 export function CollectionReel({ works }: { works: ReelWork[] }) {
@@ -120,27 +121,43 @@ function AmbientBackdrop({ works }: { works: ReelWork[] }) {
 
 function CollectionComposition({ works }: { works: ReelWork[] }) {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
-  const progress = (frame % durationInFrames) / durationInFrames;
-  const active = Math.floor(progress * works.length) % works.length;
+  const { fps } = useVideoConfig();
+  const active = Math.floor(frame / FRAMES_PER_WORK) % works.length;
   const next = (active + 1) % works.length;
   const third = (active + 3) % works.length;
-  const local = (progress * works.length) % 1;
-  const lift = spring({ frame: frame % Math.round(durationInFrames / works.length), fps });
+  const slotFrame = frame % FRAMES_PER_WORK;
+  const fadeIn = interpolate(
+    slotFrame,
+    [0, CROSSFADE_FRAMES],
+    [0, 1],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+  );
+  const fadeOut = interpolate(
+    slotFrame,
+    [FRAMES_PER_WORK - CROSSFADE_FRAMES, FRAMES_PER_WORK],
+    [1, 0],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+  );
+  const nextFade = interpolate(
+    slotFrame,
+    [FRAMES_PER_WORK - CROSSFADE_FRAMES, FRAMES_PER_WORK],
+    [0, 0.22],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+  );
+  const lift = spring({ frame: slotFrame, fps, config: { damping: 200 } });
 
   return (
     <AbsoluteFill style={{ backgroundColor: "#050505", overflow: "hidden" }}>
       <ArtworkLayer
         work={works[active]}
-        opacity={interpolate(local, [0, 0.14, 0.86, 1], [0, 1, 1, 0])}
-        scale={interpolate(local, [0, 1], [1.04, 1.12])}
-        x={interpolate(local, [0, 1], [-34, 22])}
+        opacity={Math.min(fadeIn, fadeOut)}
+        scale={1}
       />
       <ArtworkLayer
         work={works[next]}
-        opacity={interpolate(local, [0, 0.18, 0.8, 1], [0.1, 0.28, 0.18, 0.1])}
-        scale={interpolate(local, [0, 1], [0.78, 0.84])}
-        x={interpolate(local, [0, 1], [490, 430])}
+        opacity={nextFade}
+        scale={0.82}
+        x={460}
         y={80}
       />
       <ArtworkLayer

@@ -54,24 +54,14 @@ export default async function Home({
   return (
     <>
       {hasFilter ? <SearchHeader /> : <SiteHeader />}
-      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-6 sm:py-8">
-        <section id="collection" className="scroll-mt-4">
-          {!hasFilter ? (
-            <SectionHeading
-              number="01"
-              kicker="Browse"
-              title="Search the collection"
-              subtitle="Find works by title, artist, medium, accession number, category, or decade."
-            />
-          ) : null}
-          <div className={hasFilter ? "" : "mt-6"}>
-            <CollectionBrowser
-              works={works}
-              categories={categories}
-              decades={decades}
-              initial={sp}
-            />
-          </div>
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-3 sm:px-6 sm:py-6">
+        <section id="collection" className="scroll-mt-2">
+          <CollectionBrowser
+            works={works}
+            categories={categories}
+            decades={decades}
+            initial={sp}
+          />
         </section>
 
         {!hasFilter ? (
