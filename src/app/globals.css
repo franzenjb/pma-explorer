@@ -204,6 +204,29 @@
   border-color: var(--foreground);
 }
 
+/* Hero Ken Burns — slow zoom + drift while a slide is active */
+@keyframes kenburns {
+  0% {
+    transform: scale(1.02) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.08) translate(-1.5%, -1%);
+  }
+  100% {
+    transform: scale(1.02) translate(1%, 1%);
+  }
+}
+.animate-kenburns {
+  animation: kenburns 18s ease-in-out infinite alternate;
+  transform-origin: center;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-kenburns {
+    animation: none;
+  }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--background); }

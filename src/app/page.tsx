@@ -14,6 +14,7 @@ import {
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { StatBar } from "@/components/stat-bar";
+import { HeroCarousel } from "@/components/hero-carousel";
 import {
   loadCategories,
   loadDecades,
@@ -29,14 +30,15 @@ export default async function Home() {
   const categories = loadCategories();
   const decades = loadDecades();
 
-  // Daily-rotating hero work
+  // Daily-rotating hero pool — five image-rich works that crossfade with
+  // a slow Ken Burns pan in the HeroCarousel client component.
   const today = new Date();
   const seed =
     today.getUTCFullYear() * 10000 +
     (today.getUTCMonth() + 1) * 100 +
     today.getUTCDate();
-  const [hero] = pickRandom(works, 1, seed);
-  const featured = pickRandom(works, 4, seed + 7);
+  const heroPool = pickHeroWorks(works, seed);
+  const featured = pickRandom(works, 8, seed + 7);
 
   const earliest = decades[0]?.sortKey ?? null;
   const latest = decades[decades.length - 1]?.sortKey ?? null;
@@ -57,146 +59,60 @@ export default async function Home() {
     <>
       <SiteHeader />
       <main className="flex-1">
-        {/* Hero — full-bleed featured work, museum-poster style */}
-        <section className="relative w-full overflow-hidden bg-foreground text-background">
-          <div className="relative aspect-[16/9] max-h-[640px] w-full sm:aspect-[21/9]">
-            {hero?.image_url ? (
-              <Image
-                src={hero.image_url}
-                alt={hero.title}
-                fill
-                priority
-                sizes="100vw"
-                className="object-cover opacity-80"
-                unoptimized
-              />
-            ) : null}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-            <div className="absolute inset-0 flex items-end">
-              <div className="mx-auto w-full max-w-7xl px-4 pb-8 sm:px-6 sm:pb-12">
-                <p className="font-data text-[11px] uppercase tracking-[0.24em] text-primary">
-                  Now on view · {hero?.category ?? "Collection"}
-                </p>
-                <h1 className="mt-3 max-w-4xl font-headline text-4xl font-semibold uppercase leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
-                  {hero?.title ?? "Portland Museum of Art"}
-                </h1>
-                <p className="mt-3 max-w-2xl text-base text-white/80 sm:text-lg">
-                  {hero?.artist ?? "—"}
-                  {hero?.year ? ` · ${hero.year}` : ""}
-                  {hero?.medium ? ` · ${hero.medium}` : ""}
-                </p>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  {hero ? (
-                    <Link
-                      href={`/work/${encodeURIComponent(hero.id)}`}
-                      className="inline-flex items-center gap-2 bg-primary px-4 py-2 font-data text-[12px] font-semibold uppercase tracking-[0.18em] text-primary-foreground hover:bg-primary/90"
-                    >
-                      View today&rsquo;s work <ArrowRight className="size-3.5" />
-                    </Link>
-                  ) : null}
-                  <Link
-                    href="/collection"
-                    className="inline-flex items-center gap-2 border border-white/40 bg-transparent px-4 py-2 font-data text-[12px] font-semibold uppercase tracking-[0.18em] text-white hover:border-white"
-                  >
-                    Search the collection <Search className="size-3.5" />
-                  </Link>
-                </div>
+        {/* 1 — Hero carousel: panning, crossfading, full-bleed */}
+        <HeroCarousel works={heroPool} />
+
+        {/* 2 — From the collection (large image grid up high) */}
+        {featured.length > 0 ? (
+          <section className="border-b border-border">
+            <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
+              <hr className="rule-red" />
+              <div className="mt-4 flex items-end justify-between gap-4">
+                <h2 className="font-headline text-2xl font-semibold uppercase tracking-tight sm:text-4xl">
+                  From the collection
+                </h2>
+                <Link
+                  href="/collection"
+                  className="font-data text-[11px] uppercase tracking-[0.18em] text-primary hover:underline"
+                >
+                  See all {works.length} →
+                </Link>
               </div>
+              <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
+                {featured.map((w) => (
+                  <li key={w.id}>
+                    <Link
+                      href={`/work/${encodeURIComponent(w.id)}`}
+                      className="group block"
+                    >
+                      <div className="relative aspect-[4/5] w-full overflow-hidden bg-muted">
+                        {w.image_url ? (
+                          <Image
+                            src={w.image_url}
+                            alt={w.title}
+                            fill
+                            sizes="(min-width:1024px) 25vw, 50vw"
+                            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                            unoptimized
+                          />
+                        ) : null}
+                      </div>
+                      <p className="mt-3 font-headline text-base font-medium leading-tight group-hover:text-primary">
+                        {w.title}
+                      </p>
+                      <p className="text-[12px] text-muted-foreground">
+                        {w.artist}
+                        {w.year ? ` · ${w.year}` : ""}
+                      </p>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
 
-        {/* Intro / by the numbers */}
-        <section className="border-b border-border">
-          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
-            <hr className="rule-red" />
-            <h2 className="mt-4 max-w-3xl font-headline text-3xl font-semibold uppercase leading-tight tracking-tight sm:text-5xl">
-              A demonstration window onto the{" "}
-              <span className="text-primary">PMA collection</span>.
-            </h2>
-            <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground">
-              This site is the proof-of-concept for a full 22,000-object index.
-              The current build features {works.length} highlights pulled from{" "}
-              <a
-                className="border-b border-primary text-foreground hover:text-primary"
-                href="https://www.portlandmuseum.org/collection/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                portlandmuseum.org/collection
-              </a>
-              , parsed and re-presented through a single-page explorer with
-              search, color, map, and daily essay surfaces.
-            </p>
-            <StatBar
-              stats={[
-                { label: "Works in demo", value: works.length, accent: true },
-                { label: "Categories", value: categories.length },
-                {
-                  label: "Date range",
-                  value: earliest && latest ? `${earliest}–${latest}` : "—",
-                },
-                { label: "Distinct artists", value: countArtists(works) },
-              ]}
-            />
-          </div>
-        </section>
-
-        {/* Feature tiles — traditional museum landing nav */}
-        <section className="border-b border-border">
-          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
-            <hr className="rule-red" />
-            <h2 className="mt-4 font-headline text-2xl font-semibold uppercase tracking-tight sm:text-3xl">
-              Ways to explore
-            </h2>
-            <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <FeatureTile
-                href="/collection"
-                icon={Search}
-                kicker="Search"
-                title="Search the collection"
-                blurb="Live filter, category pills, decade scrubber. The classic explorer."
-              />
-              <FeatureTile
-                href="/color"
-                icon={Palette}
-                kicker="Pure looking"
-                title="Color of Maine"
-                blurb="Every work sorted by dominant hue. Click a color, drill in."
-              />
-              <FeatureTile
-                href="/map"
-                icon={MapPin}
-                kicker="On this coast"
-                title="Where the works were made"
-                blurb="Hand-tagged pins for Maine subjects: Castine, Katahdin, Mount Desert."
-              />
-              <FeatureTile
-                href="/daily"
-                icon={Calendar}
-                kicker="Today"
-                title="Daily painting"
-                blurb="One work, one essay, every day. Permalinkable, shareable."
-              />
-              <FeatureTile
-                href="/conversation"
-                icon={MessageSquare}
-                kicker="This week"
-                title="Two works in conversation"
-                blurb="Curatorial pairings that argue, echo, or rhyme with each other."
-              />
-              <FeatureTile
-                href="/artists"
-                icon={Users}
-                kicker="Index"
-                title="Artists A→Z"
-                blurb="Every artist in the demo, with sample work and quick links."
-              />
-            </ul>
-          </div>
-        </section>
-
-        {/* Today's daily painting + this week's pairing */}
+        {/* 3 — Today's daily painting + this week's pairing */}
         <section className="border-b border-border">
           <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-2">
             {dailyEntry && dailyWork ? (
@@ -277,57 +193,96 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Featured highlights strip */}
-        {featured.length > 0 ? (
-          <section className="border-b border-border">
-            <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
-              <hr className="rule-red" />
-              <div className="mt-4 flex items-end justify-between gap-4">
-                <h2 className="font-headline text-2xl font-semibold uppercase tracking-tight sm:text-3xl">
-                  From the collection
-                </h2>
-                <Link
-                  href="/collection"
-                  className="font-data text-[11px] uppercase tracking-[0.18em] text-primary hover:underline"
-                >
-                  See all {works.length} →
-                </Link>
-              </div>
-              <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4">
-                {featured.map((w) => (
-                  <li key={w.id}>
-                    <Link
-                      href={`/work/${encodeURIComponent(w.id)}`}
-                      className="group block"
-                    >
-                      <div className="relative aspect-[4/5] w-full overflow-hidden bg-muted">
-                        {w.image_url ? (
-                          <Image
-                            src={w.image_url}
-                            alt={w.title}
-                            fill
-                            sizes="(min-width:1024px) 25vw, 50vw"
-                            className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                            unoptimized
-                          />
-                        ) : null}
-                      </div>
-                      <p className="mt-3 font-headline text-base font-medium leading-tight group-hover:text-primary">
-                        {w.title}
-                      </p>
-                      <p className="text-[12px] text-muted-foreground">
-                        {w.artist}
-                        {w.year ? ` · ${w.year}` : ""}
-                      </p>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </section>
-        ) : null}
+        {/* 4 — By the numbers */}
+        <section className="border-b border-border">
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
+            <hr className="rule-red" />
+            <h2 className="mt-4 max-w-3xl font-headline text-3xl font-semibold uppercase leading-tight tracking-tight sm:text-4xl">
+              A demonstration window onto the{" "}
+              <span className="text-primary">PMA collection</span>.
+            </h2>
+            <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground">
+              Proof-of-concept for a full 22,000-object index. Current build
+              features {works.length} highlights pulled from{" "}
+              <a
+                className="border-b border-primary text-foreground hover:text-primary"
+                href="https://www.portlandmuseum.org/collection/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                portlandmuseum.org/collection
+              </a>
+              .
+            </p>
+            <StatBar
+              stats={[
+                { label: "Works in demo", value: works.length, accent: true },
+                { label: "Categories", value: categories.length },
+                {
+                  label: "Date range",
+                  value: earliest && latest ? `${earliest}–${latest}` : "—",
+                },
+                { label: "Distinct artists", value: countArtists(works) },
+              ]}
+            />
+          </div>
+        </section>
 
-        {/* CTA strip */}
+        {/* 5 — Ways to explore (moved low; images win above) */}
+        <section className="border-b border-border">
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
+            <hr className="rule-red" />
+            <h2 className="mt-4 font-headline text-2xl font-semibold uppercase tracking-tight sm:text-3xl">
+              Ways to explore
+            </h2>
+            <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <FeatureTile
+                href="/collection"
+                icon={Search}
+                kicker="Search"
+                title="Search the collection"
+                blurb="Live filter, category pills, decade scrubber. The classic explorer."
+              />
+              <FeatureTile
+                href="/color"
+                icon={Palette}
+                kicker="Pure looking"
+                title="Color of Maine"
+                blurb="Every work sorted by dominant hue. Click a color, drill in."
+              />
+              <FeatureTile
+                href="/map"
+                icon={MapPin}
+                kicker="On this coast"
+                title="Where the works were made"
+                blurb="Hand-tagged pins for Maine subjects: Castine, Katahdin, Mount Desert."
+              />
+              <FeatureTile
+                href="/daily"
+                icon={Calendar}
+                kicker="Today"
+                title="Daily painting"
+                blurb="One work, one essay, every day. Permalinkable, shareable."
+              />
+              <FeatureTile
+                href="/conversation"
+                icon={MessageSquare}
+                kicker="This week"
+                title="Two works in conversation"
+                blurb="Curatorial pairings that argue, echo, or rhyme with each other."
+              />
+              <FeatureTile
+                href="/artists"
+                icon={Users}
+                kicker="Index"
+                title="Artists A→Z"
+                blurb="Every artist in the demo, with sample work and quick links."
+              />
+            </ul>
+          </div>
+        </section>
+
+        {/* 6 — CTA strip */}
         <section className="bg-foreground text-background">
           <div className="mx-auto flex max-w-7xl flex-col items-start gap-6 px-4 py-12 sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <div>
@@ -354,6 +309,25 @@ export default async function Home() {
       <SiteFooter />
     </>
   );
+}
+
+/**
+ * Pick five "hero-quality" works for the carousel — prefer landscapes /
+ * paintings, skip drawings/works on paper that look thin at full bleed.
+ */
+function pickHeroWorks(
+  works: ReturnType<typeof loadWorks>,
+  seed: number
+): typeof works {
+  const candidates = works.filter(
+    (w) =>
+      Boolean(w.image_url) &&
+      (w.category === "American Art" ||
+        w.category === "European Art" ||
+        w.category === "Modern & Contemporary Art")
+  );
+  const pool = candidates.length >= 5 ? candidates : works.filter((w) => w.image_url);
+  return pickRandom(pool, 5, seed);
 }
 
 function FeatureTile({
