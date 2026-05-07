@@ -31,27 +31,31 @@ export function MaineMap({ pins }: { pins: MainePin[] }) {
     let mounted = true;
     import("leaflet").then((L) => {
       if (!mounted) return;
-      // Editorial museum-grade pin: a thin black stem rising from the
-      // exact lat/lng, capped by an ink ring around a PMA-red disc with
-      // a small white aperture at the centre. No drop shadow, no
-      // gradient — flat, geometric, designed for reading next to a
-      // serif page headline.
+      // Stylized painter's palette pin — kidney-shaped wood palette with
+      // a thumb-hole and four paint dabs (PMA red, ochre, slate blue,
+      // pine green). Thin black stem drops to the exact lat/lng so the
+      // pin reads as a marker, not a sticker.
       setPmaIcon(
         L.divIcon({
           className: "pma-pin",
-          iconSize: [16, 22],
-          iconAnchor: [8, 21],
-          popupAnchor: [0, -20],
+          iconSize: [30, 34],
+          iconAnchor: [15, 33],
+          popupAnchor: [0, -30],
           html: [
-            '<svg viewBox="0 0 16 22" width="16" height="22" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">',
-            // Stem: 1px black line from base of disc to the anchor point
-            '<line x1="8" y1="14" x2="8" y2="21" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="square"/>',
-            // Ink ring (acts as the outline)
-            '<circle cx="8" cy="8" r="7" fill="#1a1a1a"/>',
-            // PMA red disc
-            '<circle cx="8" cy="8" r="5.5" fill="#df1924"/>',
-            // White centre aperture
-            '<circle cx="8" cy="8" r="1.6" fill="#ffffff"/>',
+            '<svg viewBox="0 0 30 34" width="30" height="34" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="filter:drop-shadow(0 1px 1px rgba(0,0,0,.18))">',
+            // Stem
+            '<line x1="15" y1="22" x2="15" y2="33" stroke="#1a1a1a" stroke-width="1.2" stroke-linecap="square"/>',
+            // Palette body — warm cream with ink outline
+            '<ellipse cx="15" cy="11" rx="13" ry="9" fill="#faf3e6" stroke="#1a1a1a" stroke-width="1.4"/>',
+            // Thumb hole
+            '<ellipse cx="7.5" cy="11" rx="2" ry="2.6" fill="#1a1a1a" opacity="0.12"/>',
+            '<ellipse cx="7.5" cy="11" rx="2" ry="2.6" fill="none" stroke="#1a1a1a" stroke-width="0.9"/>',
+            // Paint dabs (PMA red, ochre, slate blue, pine green, plum)
+            '<circle cx="15" cy="5.2" r="1.5" fill="#df1924"/>',
+            '<circle cx="20" cy="7.5" r="1.4" fill="#e3c93c"/>',
+            '<circle cx="22" cy="12.5" r="1.4" fill="#4b8da4"/>',
+            '<circle cx="18" cy="16.5" r="1.4" fill="#3a8a64"/>',
+            '<circle cx="13" cy="17" r="1.3" fill="#a13e8a"/>',
             "</svg>",
           ].join(""),
         })
@@ -79,9 +83,18 @@ export function MaineMap({ pins }: { pins: MainePin[] }) {
         scrollWheelZoom={false}
         style={{ height: "100%", width: "100%" }}
       >
+        {/* Stamen Watercolor — painter-grade tiles, hosted by Stadia
+         * Maps. Free for low-traffic non-commercial use. Toner Labels
+         * overlay sits on top so place names stay legible against the
+         * watercolor wash.
+         */}
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='Tiles &copy; <a href="https://stamen.com" target="_blank" rel="noreferrer">Stamen Design</a>, hosted by <a href="https://stadiamaps.com" target="_blank" rel="noreferrer">Stadia Maps</a> · Data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>'
+          url="https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg"
+        />
+        <TileLayer
+          attribution=""
+          url="https://tiles.stadiamaps.com/tiles/stamen_toner_labels/{z}/{x}/{y}.png"
         />
         {pmaIcon ? pins.map((p) => (
           <Marker key={p.work_id} position={[p.lat, p.lng]} icon={pmaIcon}>
