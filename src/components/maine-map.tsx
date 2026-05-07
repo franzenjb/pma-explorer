@@ -83,18 +83,15 @@ export function MaineMap({ pins }: { pins: MainePin[] }) {
         scrollWheelZoom={false}
         style={{ height: "100%", width: "100%" }}
       >
-        {/* Stamen Watercolor — painter-grade tiles, hosted by Stadia
-         * Maps. Free for low-traffic non-commercial use. Toner Labels
-         * overlay sits on top so place names stay legible against the
-         * watercolor wash.
+        {/* CARTO Voyager — soft, editorial cartography. Free, no API
+         * key required, much closer to a painter's wash than the harsh
+         * default OSM raster.
          */}
         <TileLayer
-          attribution='Tiles &copy; <a href="https://stamen.com" target="_blank" rel="noreferrer">Stamen Design</a>, hosted by <a href="https://stadiamaps.com" target="_blank" rel="noreferrer">Stadia Maps</a> · Data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>'
-          url="https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg"
-        />
-        <TileLayer
-          attribution=""
-          url="https://tiles.stadiamaps.com/tiles/stamen_toner_labels/{z}/{x}/{y}.png"
+          attribution='Tiles &copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a> · Data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors'
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          subdomains="abcd"
+          maxZoom={19}
         />
         {pmaIcon ? pins.map((p) => (
           <Marker key={p.work_id} position={[p.lat, p.lng]} icon={pmaIcon}>
