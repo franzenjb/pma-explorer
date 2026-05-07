@@ -28,6 +28,7 @@ export default async function ColorPage({
   const visible = active
     ? allSorted.filter((w) => w.hue_bucket?.toLowerCase() === active)
     : allSorted;
+  const activeBucket = active ? buckets.find((b) => b.bucket.toLowerCase() === active) : null;
 
   return (
     <>
@@ -41,7 +42,38 @@ export default async function ColorPage({
         />
 
         {/* Sticky color filter ribbon — always visible while you browse the mosaic */}
-        <div className="sticky top-0 z-30 -mx-6 mt-8 border-y border-border bg-background/95 px-6 py-4 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <div className="sticky top-0 z-30 -mx-4 mt-6 border-y border-border bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:-mx-6 sm:px-6 sm:py-4">
+          {activeBucket ? (
+            <div
+              className="mb-3 flex items-center gap-4 border-l-[6px] bg-card px-4 py-3"
+              style={{ borderColor: activeBucket.hex }}
+            >
+              <span
+                aria-hidden
+                className="block size-12 shrink-0 sm:size-14"
+                style={{ background: activeBucket.hex }}
+              />
+              <div className="min-w-0 flex-1">
+                <p className="font-data text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                  Now filtering
+                </p>
+                <p className="mt-0.5 font-headline text-2xl font-semibold uppercase leading-tight tracking-tight sm:text-3xl">
+                  {activeBucket.bucket}
+                </p>
+                <p className="font-data text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+                  {visible.length} {visible.length === 1 ? "work" : "works"}
+                  <span className="mx-2 text-border">·</span>
+                  <span style={{ color: activeBucket.hex }}>{activeBucket.hex}</span>
+                </p>
+              </div>
+              <Link
+                href="/color"
+                className="shrink-0 border border-border bg-background px-3 py-1.5 font-data text-[11px] uppercase tracking-[0.18em] hover:border-foreground"
+              >
+                Clear ✕
+              </Link>
+            </div>
+          ) : null}
           <div className="space-y-3">
             {/* Continuous hue strip — every work as one slice */}
             <div className="flex h-9 w-full overflow-hidden rounded-sm">
