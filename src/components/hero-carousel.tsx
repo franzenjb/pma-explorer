@@ -22,6 +22,9 @@ const HERO_FOCUS: Record<string, string> = {
   // Castine Harbor — Fitz Henry Lane. Center crop shows blank sky;
   // shift view down to feature the shoreline + boats.
   "1996.38.29": "50% 78%",
+  // Anne and her Nurse — Mary Cassatt. Eyes sit in the upper third;
+  // pull the crop up so the figures stay in frame across the pan.
+  "1996.12": "50% 28%",
 };
 
 /**
