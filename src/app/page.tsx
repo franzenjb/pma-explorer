@@ -3,6 +3,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { WorkCard } from "@/components/work-card";
 import { CategoryFilter } from "@/components/category-filter";
 import { HeroRotator } from "@/components/hero-rotator";
+import { CollectionReel } from "@/components/collection-reel";
 import { Toolbar } from "@/components/toolbar";
 import { SectionHeading } from "@/components/section-heading";
 import { StatBar } from "@/components/stat-bar";
@@ -50,6 +51,7 @@ export default async function Home({
     (today.getUTCMonth() + 1) * 100 +
     today.getUTCDate();
   const hero = hasFilter ? [] : pickRandom(works, 3, seed);
+  const reel = pickRandom(works, 8, seed + 220);
 
   const earliest = decades[0]?.sortKey ?? null;
   const latest = decades[decades.length - 1]?.sortKey ?? null;
@@ -57,17 +59,20 @@ export default async function Home({
   return (
     <>
       <SiteHeader />
+      {!hasFilter ? <CollectionReel works={reel} /> : null}
       <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-12">
         <section className="border-b border-border pb-12">
           <hr className="rule-red" />
-          <h2 className="mt-4 max-w-4xl font-headline text-[56px] font-semibold uppercase leading-[0.98] tracking-tight sm:text-[80px]">
-            Featured works from the{" "}
-            <span className="text-primary">Portland Museum of Art</span>.
+          <h2 className="mt-4 max-w-4xl font-headline text-[48px] font-semibold uppercase leading-[0.98] tracking-tight sm:text-[74px]">
+            Browse PMA by{" "}
+            <span className="text-primary">work, color, place, and time</span>.
           </h2>
           <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground">
-            A small, fast browse of paintings, photographs, decorative arts, and
-            modern works highlighted on the museum&rsquo;s public collection
-            page. This demo pulls from{" "}
+            A fast, editorial collection surface for paintings, photographs,
+            decorative arts, and modern works highlighted on the museum&rsquo;s
+            public collection page. This Codex v2 concept keeps the PMA palette
+            and Barlow type system, then adds a restrained motion layer powered
+            by React composition. Source data comes from{" "}
             <a
               className="border-b border-primary text-foreground hover:text-primary"
               href="https://www.portlandmuseum.org/collection/"
@@ -104,7 +109,7 @@ export default async function Home({
           </section>
         ) : null}
 
-        <section className="space-y-6 pt-12">
+        <section id="collection" className="space-y-6 pt-12 scroll-mt-8">
           <SectionHeading
             number="02"
             kicker="Browse"

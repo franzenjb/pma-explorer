@@ -1,9 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import type { MainePin } from "@/lib/maine";
+import type { DivIcon } from "leaflet";
 
 // Leaflet uses `window` at import time → load only on the client.
 const MapContainer = dynamic(
@@ -24,6 +25,33 @@ const Popup = dynamic(
 );
 
 export function MaineMap({ pins }: { pins: MainePin[] }) {
+  const [pmaIcon, setPmaIcon] = useState<DivIcon | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    import("leaflet").then((L) => {
+      if (!mounted) return;
+      // Leaflet's default marker images aren't bundled by Next, so we render
+      // the pin as inline SVG via a DivIcon. PMA red pin with a white dot.
+      setPmaIcon(
+        L.divIcon({
+          className: "pma-pin",
+          iconSize: [22, 28],
+          iconAnchor: [11, 28],
+          popupAnchor: [0, -26],
+          html:
+            '<svg viewBox="0 0 22 28" width="22" height="28" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 1px 1px rgba(0,0,0,.35))">' +
+            '<path d="M11 0C5 0 0 4.5 0 10.5 0 18 11 28 11 28S22 18 22 10.5C22 4.5 17 0 11 0Z" fill="#df1924"/>' +
+            '<circle cx="11" cy="10.5" r="4" fill="#ffffff"/>' +
+            "</svg>",
+        })
+      );
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   // Center on coastal Maine. Bounds are adjusted to fit all pins via Leaflet's
   // own bounds API at runtime — but a sane initial center keeps the map quiet.
   const center = useMemo<[number, number]>(() => {
@@ -45,8 +73,8 @@ export function MaineMap({ pins }: { pins: MainePin[] }) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {pins.map((p) => (
-          <Marker key={p.work_id} position={[p.lat, p.lng]}>
+        {pmaIcon ? pins.map((p) => (
+          <Marker key={p.work_id} position={[p.lat, p.lng]} icon={pmaIcon}>
             <Popup>
               <div style={{ minWidth: 200 }}>
                 <p
@@ -98,7 +126,7 @@ export function MaineMap({ pins }: { pins: MainePin[] }) {
               </div>
             </Popup>
           </Marker>
-        ))}
+        )) : null}
       </MapContainer>
     </div>
   );
