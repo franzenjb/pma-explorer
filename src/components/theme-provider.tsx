@@ -29,13 +29,11 @@ export function ThemeProvider({
   const [resolvedTheme, setResolvedTheme] = useState<Theme>("light");
 
   useEffect(() => {
+    // Default to light. System preference is intentionally ignored — the
+    // PMA palette is designed for the cream/ink light theme. Users can
+    // still opt in to dark via the toggle, which is persisted.
     const stored = localStorage.getItem("pma-theme");
-    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const nextTheme = stored === "dark" || stored === "light"
-      ? stored
-      : systemDark
-        ? "dark"
-        : "light";
+    const nextTheme: Theme = stored === "dark" ? "dark" : "light";
     // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate persisted browser theme after mount
     setResolvedTheme(nextTheme);
     document.documentElement.classList.toggle("dark", nextTheme === "dark");
