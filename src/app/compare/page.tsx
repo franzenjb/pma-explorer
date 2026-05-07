@@ -81,8 +81,9 @@ export default async function ComparePage({
 
             <NarrativeBlock ids={picked.map((w) => w.id)} />
 
-            {/* Read-across table */}
-            <table className="mt-12 w-full border-t border-border text-[13px]">
+            {/* Read-across table — wrap so it scrolls horizontally on phones */}
+            <div className="mt-12 -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+            <table className="w-full min-w-[640px] border-t border-border text-[13px]">
               <tbody>
                 {ROWS.map((row) => (
                   <tr key={row.label} className="border-b border-border align-top">
@@ -101,6 +102,7 @@ export default async function ComparePage({
                 ))}
               </tbody>
             </table>
+            </div>
 
             <p className="mt-8 text-[12px] text-muted-foreground">
               Span:{" "}
@@ -146,6 +148,9 @@ const ROWS: Array<{ label: string; value: (w: ReturnType<typeof findWork> & obje
 function NarrativeBlock({ ids }: { ids: string[] }) {
   const entry = getCompareNarrative(ids);
   if (entry) {
+    const related = (entry.related_ids ?? [])
+      .map((id) => findWork(id))
+      .filter((w): w is NonNullable<typeof w> => Boolean(w));
     return (
       <article className="mt-12 border border-border bg-card p-6 sm:p-8">
         <header className="flex items-baseline justify-between gap-4">
@@ -162,7 +167,44 @@ function NarrativeBlock({ ids }: { ids: string[] }) {
         <p className="mt-5 max-w-3xl whitespace-pre-line text-[15px] leading-relaxed">
           {entry.narrative}
         </p>
-        <p className="mt-5 font-data text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+        {related.length > 0 ? (
+          <section className="mt-8 border-t border-border pt-5">
+            <p className="font-data text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+              RAG retrieval · {related.length} related works pulled from the{" "}
+              {77}-work index by TF-IDF similarity
+            </p>
+            <ul className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-6">
+              {related.map((w) => (
+                <li key={w.id}>
+                  <Link
+                    href={`/work/${encodeURIComponent(w.id)}`}
+                    className="group block"
+                  >
+                    <span className="relative block aspect-square overflow-hidden bg-muted">
+                      {w.image_url ? (
+                        <Image
+                          src={w.image_url}
+                          alt={w.title}
+                          fill
+                          sizes="(min-width:640px) 16vw, 33vw"
+                          className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+                          unoptimized
+                        />
+                      ) : null}
+                    </span>
+                    <p className="mt-1.5 truncate font-headline text-[12px] font-medium leading-tight group-hover:text-primary">
+                      {w.title}
+                    </p>
+                    <p className="truncate text-[10px] text-muted-foreground">
+                      {w.artist}
+                    </p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+        <p className="mt-6 font-data text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
           Generated {entry.generated_at.slice(0, 10)} · grounded only in the
           works&rsquo; catalog metadata
         </p>

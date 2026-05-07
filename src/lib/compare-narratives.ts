@@ -3,6 +3,7 @@ import data from "../../data/compare-narratives.json";
 export type CompareNarrative = {
   ids: string[];
   narrative: string;
+  related_ids?: string[];
   generated_at: string;
   generated_by: "anthropic" | "placeholder";
 };

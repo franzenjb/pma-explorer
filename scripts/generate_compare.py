@@ -29,6 +29,7 @@ from typing import Iterable
 REPO = Path(__file__).resolve().parent.parent
 WORKS_PATH = REPO / "data" / "works.json"
 OUT_PATH = REPO / "data" / "compare-narratives.json"
+INDEX_PATH = REPO / "data" / "index.json"
 
 MODEL = "claude-haiku-4-5-20251001"
 SYSTEM = (
@@ -45,6 +46,53 @@ SYSTEM = (
 
 def slug_for(ids: list[str]) -> str:
     return "+".join(sorted(ids))
+
+
+# ---------- RAG retrieval over the TF-IDF index ----------------------------
+
+def load_index() -> dict | None:
+    if not INDEX_PATH.exists():
+        return None
+    return json.loads(INDEX_PATH.read_text())
+
+
+def retrieve_related(focal_ids: list[str], k: int = 6) -> list[str]:
+    """Return ids of the top-k corpus works most similar to the focal works,
+    excluding the focal works themselves. Pure cosine over TF-IDF vectors."""
+    index = load_index()
+    if not index:
+        return []
+    docs = {d["id"]: d for d in index["docs"]}
+    focal = [docs[i] for i in focal_ids if i in docs]
+    if not focal:
+        return []
+
+    # Sum focal TF-IDF vectors → query vector. Re-normalize.
+    query: dict[int, float] = {}
+    for d in focal:
+        for k_str, v in d["tf"].items():
+            ki = int(k_str)
+            query[ki] = query.get(ki, 0.0) + v
+    qn = sum(v * v for v in query.values()) ** 0.5 or 1.0
+
+    scored: list[tuple[float, str]] = []
+    focal_set = set(focal_ids)
+    for d in index["docs"]:
+        if d["id"] in focal_set:
+            continue
+        dot = 0.0
+        tf = d["tf"]
+        # Iterate the smaller side (query is typically smaller)
+        for ki, qv in query.items():
+            dv = tf.get(str(ki))
+            if dv:
+                dot += qv * dv
+        if dot <= 0:
+            continue
+        score = dot / (qn * d["norm"])
+        scored.append((score, d["id"]))
+    scored.sort(reverse=True)
+    return [wid for _, wid in scored[:k]]
 
 
 def placeholder_narrative(works: list[dict]) -> str:
@@ -64,7 +112,26 @@ def placeholder_narrative(works: list[dict]) -> str:
     )
 
 
-def call_anthropic(works: list[dict], api_key: str) -> str:
+def format_work_block(w: dict, label: str) -> str:
+    return (
+        f"[{label}]\n"
+        f"Title: {w.get('title')}\n"
+        f"Artist: {w.get('artist')}\n"
+        f"Nationality / dates: {w.get('artist_nationality') or '—'}\n"
+        f"Year: {w.get('year') or '—'}\n"
+        f"Medium: {w.get('medium') or '—'}\n"
+        f"Dimensions: {w.get('dimensions') or '—'}\n"
+        f"Credit line: {w.get('credit_line') or '—'}\n"
+        f"Category: {w.get('category') or '—'}\n"
+        f"Accession: {w.get('accession_number') or '—'}\n"
+    )
+
+
+def call_anthropic(
+    works: list[dict],
+    api_key: str,
+    related: list[dict] | None = None,
+) -> str:
     try:
         from anthropic import Anthropic
     except ImportError:
@@ -72,24 +139,28 @@ def call_anthropic(works: list[dict], api_key: str) -> str:
         return placeholder_narrative(works)
     client = Anthropic(api_key=api_key)
 
-    blocks = []
-    for i, w in enumerate(works, start=1):
-        blocks.append(
-            f"[Work {i}]\n"
-            f"Title: {w.get('title')}\n"
-            f"Artist: {w.get('artist')}\n"
-            f"Nationality / dates: {w.get('artist_nationality') or '—'}\n"
-            f"Year: {w.get('year') or '—'}\n"
-            f"Medium: {w.get('medium') or '—'}\n"
-            f"Dimensions: {w.get('dimensions') or '—'}\n"
-            f"Credit line: {w.get('credit_line') or '—'}\n"
-            f"Category: {w.get('category') or '—'}\n"
-            f"Accession: {w.get('accession_number') or '—'}\n"
-        )
+    focal_blocks = [
+        format_work_block(w, f"Work {i}") for i, w in enumerate(works, start=1)
+    ]
+    related_blocks = []
+    if related:
+        for i, w in enumerate(related, start=1):
+            related_blocks.append(format_work_block(w, f"Related {i}"))
+    related_section = (
+        "\nThese RELATED works are also in the PMA collection. You may "
+        "reference them as comparanda where genuinely useful, but the "
+        "essay's subject is the FOCAL works above; do not let the related "
+        "list dominate.\n\n" + "\n".join(related_blocks)
+        if related_blocks
+        else ""
+    )
     prompt = (
         "Write the 'read across' essay for these "
-        f"{len(works)} works. Stay strictly within the metadata I provide.\n\n"
-        + "\n".join(blocks)
+        f"{len(works)} FOCAL works. Stay strictly within the metadata "
+        "provided in this prompt. Do not invent biography, exhibition "
+        "history, or quotes.\n\n"
+        + "\n".join(focal_blocks)
+        + related_section
     )
     msg = client.messages.create(
         model=MODEL,
@@ -126,6 +197,7 @@ def main() -> int:
     ap.add_argument("ids", nargs="*", help="Accession ids of 2–4 works")
     ap.add_argument("--combo", help='One combo string, e.g. "1888.1,1996.12"')
     ap.add_argument("--combos-file", help="Newline-delimited combos file")
+    ap.add_argument("-k", type=int, default=6, help="RAG top-K related works")
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
 
@@ -154,12 +226,17 @@ def main() -> int:
         if not args.force and slug in cache:
             print(f"  · {slug} cached")
             continue
+        related_ids = retrieve_related(ids, k=args.k)
+        related = [works_index[i] for i in related_ids if i in works_index]
         narrative = (
-            call_anthropic(works, api_key) if api_key else placeholder_narrative(works)
+            call_anthropic(works, api_key, related=related)
+            if api_key
+            else placeholder_narrative(works)
         )
         cache[slug] = {
             "ids": sorted(ids),
             "narrative": narrative,
+            "related_ids": related_ids,
             "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
             "generated_by": "anthropic" if api_key else "placeholder",
         }
