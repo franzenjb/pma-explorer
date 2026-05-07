@@ -315,6 +315,17 @@ export default async function Home() {
  * Pick five "hero-quality" works for the carousel — prefer landscapes /
  * paintings, skip drawings/works on paper that look thin at full bleed.
  */
+/**
+ * Works that don't pan well at full bleed — portrait-only crops, busy
+ * compositions, or anything where the Ken Burns drift looks wrong. Filtered
+ * out of the hero rotation regardless of category.
+ */
+const HERO_DENYLIST: ReadonlySet<string> = new Set([
+  // "Woman Flying" — Katherine Bradford, oil on canvas dropcloth.
+  // Composition reads poorly when zoomed/cropped for the carousel.
+  "2012.14",
+]);
+
 function pickHeroWorks(
   works: ReturnType<typeof loadWorks>,
   seed: number
@@ -322,11 +333,15 @@ function pickHeroWorks(
   const candidates = works.filter(
     (w) =>
       Boolean(w.image_url) &&
+      !HERO_DENYLIST.has(w.id) &&
       (w.category === "American Art" ||
         w.category === "European Art" ||
         w.category === "Modern & Contemporary Art")
   );
-  const pool = candidates.length >= 5 ? candidates : works.filter((w) => w.image_url);
+  const pool =
+    candidates.length >= 5
+      ? candidates
+      : works.filter((w) => w.image_url && !HERO_DENYLIST.has(w.id));
   return pickRandom(pool, 5, seed);
 }
 
