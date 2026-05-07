@@ -55,6 +55,7 @@ const GROUPS: Group[] = [
 
 const ROUTES: Record<string, string> = {
   h: "/",
+  l: "/collection",
   c: "/color",
   m: "/map",
   a: "/artists",

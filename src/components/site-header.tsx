@@ -7,7 +7,8 @@ import { MobileMenu } from "@/components/mobile-menu";
 import { loadWorks } from "@/lib/works";
 
 const NAV = [
-  { href: "/", label: "Collection" },
+  { href: "/", label: "Home" },
+  { href: "/collection", label: "Collection" },
   { href: "/color", label: "Color" },
   { href: "/map", label: "Map" },
   { href: "/artists", label: "Artists" },
