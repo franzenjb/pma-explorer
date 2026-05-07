@@ -91,7 +91,7 @@ export function CollectionBrowser({ works, categories, decades, initial }: Props
 
   return (
     <div className="space-y-5">
-      <div className="sticky top-0 z-30 -mx-6 border-y border-border bg-background/95 px-6 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <div className="sticky top-[52px] z-30 -mx-4 border-y border-border bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/85 sm:-mx-6 sm:px-6 sm:py-4 lg:top-0">
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-3">
             <p className="font-data text-[10px] uppercase tracking-[0.22em] text-primary">
