@@ -17,11 +17,13 @@ type ReelWork = Pick<
 >;
 
 const FPS = 30;
-const DURATION = 270;
+const FRAMES_PER_WORK = 105; // 3.5 seconds at 30fps.
+const MAX_REEL_WORKS = 8;
 
 export function CollectionReel({ works }: { works: ReelWork[] }) {
-  const reelWorks = works.filter((work) => work.image_url).slice(0, 8);
+  const reelWorks = works.filter((work) => work.image_url).slice(0, MAX_REEL_WORKS);
   if (reelWorks.length < 3) return null;
+  const durationInFrames = reelWorks.length * FRAMES_PER_WORK;
 
   return (
     <section className="relative isolate overflow-hidden border-b border-border bg-foreground text-background">
@@ -66,7 +68,7 @@ export function CollectionReel({ works }: { works: ReelWork[] }) {
             <Player
               component={CollectionComposition}
               inputProps={{ works: reelWorks }}
-              durationInFrames={DURATION}
+              durationInFrames={durationInFrames}
               compositionWidth={1600}
               compositionHeight={1000}
               fps={FPS}

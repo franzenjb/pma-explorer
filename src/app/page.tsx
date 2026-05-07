@@ -53,74 +53,114 @@ export default async function Home({
 
   return (
     <>
-      <SiteHeader />
-      {!hasFilter ? <CollectionReel works={reel} /> : null}
-      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-12">
-        <section className="border-b border-border pb-12">
-          <hr className="rule-red" />
-          <h2 className="mt-4 max-w-4xl font-headline text-[48px] font-semibold uppercase leading-[0.98] tracking-tight sm:text-[74px]">
-            Browse PMA by{" "}
-            <span className="text-primary">work, color, place, and time</span>.
-          </h2>
-          <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground">
-            A fast, editorial collection surface for paintings, photographs,
-            decorative arts, and modern works highlighted on the museum&rsquo;s
-            public collection page. This Codex v2 concept keeps the PMA palette
-            and Barlow type system, then adds a restrained motion layer powered
-            by React composition. Source data comes from{" "}
-            <a
-              className="border-b border-primary text-foreground hover:text-primary"
-              href="https://www.portlandmuseum.org/collection/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              portlandmuseum.org/collection
-            </a>{" "}
-            and is the proof-of-concept for a full 22,000-object index.
-          </p>
-          <StatBar
-            stats={[
-              { label: "Works in demo", value: works.length, accent: true },
-              { label: "Categories", value: categories.length },
-              {
-                label: "Date range",
-                value: earliest && latest ? `${earliest}–${latest}` : "—",
-              },
-              { label: "Artists", value: countArtists(works) },
-            ]}
-          />
-        </section>
-
-        {hero.length > 0 ? (
-          <section className="space-y-6 pt-12">
+      {hasFilter ? <SearchHeader /> : <SiteHeader />}
+      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-6 sm:py-8">
+        <section id="collection" className="scroll-mt-4">
+          {!hasFilter ? (
             <SectionHeading
               number="01"
+              kicker="Browse"
+              title="Search the collection"
+              subtitle="Find works by title, artist, medium, accession number, category, or decade."
+            />
+          ) : null}
+          <div className={hasFilter ? "" : "mt-6"}>
+            <CollectionBrowser
+              works={works}
+              categories={categories}
+              decades={decades}
+              initial={sp}
+            />
+          </div>
+        </section>
+
+        {!hasFilter ? (
+          <>
+            <section className="pt-12">
+              <CollectionReel works={reel} />
+            </section>
+
+            <section className="border-b border-border py-12">
+              <hr className="rule-red" />
+              <h2 className="mt-4 max-w-4xl font-headline text-[48px] font-semibold uppercase leading-[0.98] tracking-tight sm:text-[74px]">
+                Browse PMA by{" "}
+                <span className="text-primary">work, color, place, and time</span>.
+              </h2>
+              <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground">
+                A fast, editorial collection surface for paintings, photographs,
+                decorative arts, and modern works highlighted on the museum&rsquo;s
+                public collection page. This Codex v2 concept keeps the PMA palette
+                and Barlow type system, then adds a restrained motion layer powered
+                by React composition. Source data comes from{" "}
+                <a
+                  className="border-b border-primary text-foreground hover:text-primary"
+                  href="https://www.portlandmuseum.org/collection/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  portlandmuseum.org/collection
+                </a>{" "}
+                and is the proof-of-concept for a full 22,000-object index.
+              </p>
+              <StatBar
+                stats={[
+                  { label: "Works in demo", value: works.length, accent: true },
+                  { label: "Categories", value: categories.length },
+                  {
+                    label: "Date range",
+                    value: earliest && latest ? `${earliest}–${latest}` : "—",
+                  },
+                  { label: "Artists", value: countArtists(works) },
+                ]}
+              />
+            </section>
+
+            <section className="space-y-6 pt-12">
+            <SectionHeading
+              number="02"
               kicker="Today"
               title="Featured this morning"
               subtitle="Three works from the catalog. Read today's Daily Painting essay for the curatorial pick."
             />
             <DailyTeaser />
             <HeroRotator works={hero} />
-          </section>
+            </section>
+          </>
         ) : null}
-
-        <section id="collection" className="space-y-6 pt-12 scroll-mt-8">
-          <SectionHeading
-            number="02"
-            kicker="Browse"
-            title="The full demo collection"
-            subtitle="Search by title, artist, medium, or accession number. Filters update the grid live."
-          />
-          <CollectionBrowser
-            works={works}
-            categories={categories}
-            decades={decades}
-            initial={sp}
-          />
-        </section>
       </main>
       <SiteFooter />
     </>
+  );
+}
+
+function SearchHeader() {
+  return (
+    <header className="border-b border-border bg-card">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
+        <Link href="/" className="flex min-w-0 items-center gap-3">
+          <span
+            aria-hidden
+            className="inline-flex h-7 w-7 shrink-0 items-center justify-center bg-primary font-headline text-[14px] font-semibold uppercase text-primary-foreground"
+          >
+            P
+          </span>
+          <span className="min-w-0">
+            <span className="block truncate font-headline text-2xl font-semibold uppercase leading-none">
+              PMA Explorer
+            </span>
+            <span className="mt-1 block font-data text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              Search mode
+            </span>
+          </span>
+        </Link>
+        <Link
+          href="/"
+          className="shrink-0 font-data text-[10px] uppercase tracking-[0.18em] text-primary hover:underline"
+        >
+          Exit
+        </Link>
+      </div>
+    </header>
   );
 }
 

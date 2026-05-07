@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Search, X } from "lucide-react";
+import { SlidersHorizontal, Search, X } from "lucide-react";
 import { WorkCard } from "@/components/work-card";
 import { Input } from "@/components/ui/input";
 import {
@@ -45,6 +45,7 @@ export function CollectionBrowser({ works, categories, decades, initial }: Props
   const [sort, setSort] = useState(initial.sort ?? "default");
   const [category, setCategory] = useState<string | null>(initial.category ?? null);
   const [decade, setDecade] = useState<string | null>(initial.decade ?? null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const artist = initial.artist ?? null;
 
   // In-memory filter on every keystroke. No round-trip.
@@ -85,34 +86,47 @@ export function CollectionBrowser({ works, categories, decades, initial }: Props
   const total = works.length;
   const showingCount = filtered.length;
   const hasFilter = Boolean(q) || Boolean(category) || Boolean(decade) || Boolean(artist);
+  const activeFilterCount = [category, decade, artist].filter(Boolean).length;
+  const showFullFilters = filtersOpen || !hasFilter;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-baseline justify-between gap-3">
-        <p className="font-data text-[10px] uppercase tracking-[0.22em] text-primary">
-          {hasFilter ? `${showingCount} of ${total} works` : `${total} works`}
-        </p>
-        {hasFilter ? (
-          <button
-            type="button"
-            onClick={() => {
-              setQ("");
-              setCategory(null);
-              setDecade(null);
-              setSort("default");
-            }}
-            className="font-data text-[10px] uppercase tracking-[0.18em] text-primary hover:underline"
-          >
-            Clear all ✕
-          </button>
-        ) : null}
-      </div>
+    <div className="space-y-5">
+      <div className="sticky top-0 z-30 -mx-6 border-y border-border bg-background/95 px-6 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-3">
+            <p className="font-data text-[10px] uppercase tracking-[0.22em] text-primary">
+              {hasFilter ? `${showingCount} of ${total}` : `${total} works`}
+            </p>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setFiltersOpen((open) => !open)}
+                className="inline-flex h-8 items-center gap-2 border border-border px-3 font-data text-[10px] uppercase tracking-[0.16em] text-muted-foreground hover:border-foreground hover:text-foreground"
+                aria-expanded={showFullFilters}
+              >
+                <SlidersHorizontal className="size-3.5" />
+                Filters{activeFilterCount ? ` ${activeFilterCount}` : ""}
+              </button>
+              {hasFilter ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQ("");
+                    setCategory(null);
+                    setDecade(null);
+                    setSort("default");
+                    setFiltersOpen(false);
+                  }}
+                  className="font-data text-[10px] uppercase tracking-[0.18em] text-primary hover:underline"
+                >
+                  Clear
+                </button>
+              ) : null}
+            </div>
+          </div>
 
-      {/* Sticky filter ribbon — toolbar + pills + decade scrubber stay pinned */}
-      <div className="sticky top-0 z-30 -mx-6 border-y border-border bg-background/95 px-6 py-4 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-        <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="relative w-full sm:max-w-sm">
+            <div className="relative w-full sm:max-w-xl">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 value={q}
@@ -132,12 +146,12 @@ export function CollectionBrowser({ works, categories, decades, initial }: Props
                 </button>
               ) : null}
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex shrink-0 items-center gap-3">
               <span className="hidden text-xs uppercase tracking-[0.18em] text-muted-foreground sm:inline">
                 Sort
               </span>
               <Select value={sort} onValueChange={(v) => setSort(v || "default")}>
-                <SelectTrigger className="w-[200px]">
+                <SelectTrigger className="w-full sm:w-[200px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -151,17 +165,31 @@ export function CollectionBrowser({ works, categories, decades, initial }: Props
             </div>
           </div>
 
-          <CategoryPills
-            categories={categories}
-            active={category}
-            onSelect={setCategory}
-          />
+          {hasFilter ? (
+            <ActiveFilters
+              category={category}
+              decade={decade}
+              artist={artist}
+              onClearCategory={() => setCategory(null)}
+              onClearDecade={() => setDecade(null)}
+            />
+          ) : null}
 
-          <DecadeScrubberLive
-            decades={decades}
-            active={decade}
-            onSelect={setDecade}
-          />
+          {showFullFilters ? (
+            <div className="space-y-3 border-t border-border pt-3">
+              <CategoryPills
+                categories={categories}
+                active={category}
+                onSelect={setCategory}
+              />
+
+              <DecadeScrubberLive
+                decades={decades}
+                active={decade}
+                onSelect={setDecade}
+              />
+            </div>
+          ) : null}
         </div>
       </div>
 
@@ -177,6 +205,55 @@ export function CollectionBrowser({ works, categories, decades, initial }: Props
         </ul>
       )}
     </div>
+  );
+}
+
+function ActiveFilters({
+  category,
+  decade,
+  artist,
+  onClearCategory,
+  onClearDecade,
+}: {
+  category: string | null;
+  decade: string | null;
+  artist: string | null;
+  onClearCategory: () => void;
+  onClearDecade: () => void;
+}) {
+  if (!category && !decade && !artist) return null;
+  return (
+    <div className="flex flex-wrap gap-2">
+      {category ? (
+        <ActiveChip label={category} onClear={onClearCategory} />
+      ) : null}
+      {decade ? <ActiveChip label={decade} onClear={onClearDecade} /> : null}
+      {artist ? <ActiveChip label={artist} /> : null}
+    </div>
+  );
+}
+
+function ActiveChip({
+  label,
+  onClear,
+}: {
+  label: string;
+  onClear?: () => void;
+}) {
+  return (
+    <span className="inline-flex h-7 items-center gap-2 border border-primary/45 px-2.5 font-data text-[10px] uppercase tracking-[0.14em] text-primary">
+      {label}
+      {onClear ? (
+        <button
+          type="button"
+          onClick={onClear}
+          aria-label={`Clear ${label}`}
+          className="text-primary/70 hover:text-primary"
+        >
+          <X className="size-3" />
+        </button>
+      ) : null}
+    </span>
   );
 }
 
@@ -266,7 +343,7 @@ function DecadeScrubberLive({
               title={`${d.decade} · ${d.count} ${d.count === 1 ? "work" : "works"}`}
               aria-label={`${d.decade}, ${d.count} works`}
               aria-pressed={isActive}
-              className="group relative block h-28 cursor-pointer bg-transparent sm:h-32"
+              className="group relative block h-16 cursor-pointer bg-transparent sm:h-24"
             >
               <span
                 className="absolute bottom-0 left-0 right-0 transition-colors"
