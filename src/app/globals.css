@@ -177,23 +177,26 @@
   letter-spacing: 0.05em;
 }
 
-/* Pill-style filter buttons (PMA visual: subtle border, ink fill on active) */
+/* Pill-style filter buttons (PMA visual: subtle border, ink fill on active).
+ * Uses tokens so light + dark themes both stay readable.
+ */
 .pill {
   display: inline-flex;
   align-items: center;
-  border: 1px solid #c8c8c8;
+  border: 1px solid var(--border);
   border-radius: 999px;
   padding: 6px 14px;
   font-size: 12px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  background: #ffffff;
+  background: var(--card);
   color: var(--foreground);
   transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
 }
 .pill:hover {
   border-color: var(--foreground);
+  color: var(--foreground);
 }
 .pill[data-active="true"] {
   background: var(--foreground);

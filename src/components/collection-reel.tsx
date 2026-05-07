@@ -75,6 +75,7 @@ export function CollectionReel({ works }: { works: ReelWork[] }) {
               initiallyMuted
               controls={false}
               clickToPlay={false}
+              acknowledgeRemotionLicense
               style={{ width: "100%", aspectRatio: "16 / 10" }}
             />
           </div>
@@ -106,6 +107,7 @@ function AmbientBackdrop({ works }: { works: ReelWork[] }) {
           <img
             src={work.image_url ?? ""}
             alt=""
+            loading="eager"
             className="h-full w-full object-cover opacity-80"
           />
         </div>
@@ -239,6 +241,7 @@ function ArtworkLayer({
     <img
       src={work.image_url ?? ""}
       alt=""
+      loading="eager"
       style={{
         position: "absolute",
         inset: "10% 8%",
