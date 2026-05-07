@@ -12,6 +12,32 @@ type Props = {
   intervalMs?: number;
 };
 
+/**
+ * Per-work overrides for object-position so the Ken Burns pan settles on
+ * the most interesting region of each painting instead of dead-centre.
+ * Keyed by accession id. Use percentages: `"50% 70%"` pushes the view
+ * 70% down (good for seascapes with lots of empty sky).
+ */
+const HERO_FOCUS: Record<string, string> = {
+  // Castine Harbor — Fitz Henry Lane. Center crop shows blank sky;
+  // shift view down to feature the shoreline + boats.
+  "1996.38.29": "50% 78%",
+};
+
+/**
+ * Trim catalog titles for the hero. Many PMA titles include parenthetical
+ * translations or sub-titles — fine in the detail page, distracting at
+ * 6xl on the homepage. Strip the trailing parenthetical and clamp to a
+ * comfortable width.
+ */
+function shortenTitle(title: string, max = 56): string {
+  const cleaned = title.replace(/\s*\([^)]*\)\s*$/, "").trim();
+  if (cleaned.length <= max) return cleaned;
+  const slice = cleaned.slice(0, max);
+  const lastSpace = slice.lastIndexOf(" ");
+  return (lastSpace > 0 ? slice.slice(0, lastSpace) : slice) + "…";
+}
+
 export function HeroCarousel({ works, intervalMs = 7000 }: Props) {
   const [active, setActive] = useState(0);
 
@@ -25,6 +51,7 @@ export function HeroCarousel({ works, intervalMs = 7000 }: Props) {
 
   if (works.length === 0) return null;
   const current = works[active];
+  const displayTitle = shortenTitle(current.title);
 
   return (
     <section className="relative w-full overflow-hidden bg-foreground text-background">
@@ -46,6 +73,7 @@ export function HeroCarousel({ works, intervalMs = 7000 }: Props) {
                 priority={i === 0}
                 sizes="100vw"
                 className="object-cover animate-kenburns"
+                style={{ objectPosition: HERO_FOCUS[w.id] ?? "center" }}
                 unoptimized
               />
             ) : null}
@@ -62,7 +90,7 @@ export function HeroCarousel({ works, intervalMs = 7000 }: Props) {
               Now on view · {current.category ?? "Collection"}
             </p>
             <h1 className="mt-3 max-w-4xl font-headline text-4xl font-semibold uppercase leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
-              {current.title}
+              {displayTitle}
             </h1>
             <p className="mt-3 max-w-2xl text-base text-white/80 sm:text-lg">
               {current.artist ?? "—"}
@@ -91,7 +119,7 @@ export function HeroCarousel({ works, intervalMs = 7000 }: Props) {
                     key={w.id}
                     type="button"
                     onClick={() => setActive(i)}
-                    aria-label={`Show ${w.title}`}
+                    aria-label={`Show ${shortenTitle(w.title, 40)}`}
                     aria-pressed={i === active}
                     className={
                       "h-1.5 transition-all " +
