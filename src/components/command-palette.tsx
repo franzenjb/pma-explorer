@@ -101,7 +101,7 @@ export function CommandPalette({ works }: Props) {
                   style={{ background: w.dominant_hex ?? "var(--muted)" }}
                 />
                 <span className="truncate">
-                  <span className="font-headline italic">{w.title}</span>
+                  <span className="font-headline font-medium">{w.title}</span>
                   <span className="text-muted-foreground"> · {w.artist ?? "Unknown"}{w.year ? ` · ${w.year}` : ""}</span>
                 </span>
               </CommandItem>

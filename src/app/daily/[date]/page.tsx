@@ -83,7 +83,7 @@ export default async function DailyPage({ params }: PageProps) {
               <p className="font-data text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
                 {work.category ?? "Today's work"}
               </p>
-              <h2 className="mt-1 font-headline text-3xl italic leading-tight">
+              <h2 className="mt-1 font-headline text-3xl font-medium leading-tight">
                 {work.title}
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">

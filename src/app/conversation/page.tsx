@@ -144,7 +144,7 @@ function Side({
         >
           {side === "left" ? "Left" : "Right"}
         </p>
-        <h3 className="mt-1 font-headline text-xl italic leading-tight group-hover:text-primary">
+        <h3 className="mt-1 font-headline text-xl font-medium leading-tight group-hover:text-primary">
           {work.title}
         </h3>
         <p className="text-sm">

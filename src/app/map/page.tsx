@@ -53,7 +53,7 @@ export default function MapPage() {
                   <span className="font-data text-[10px] uppercase tracking-[0.22em] text-primary">
                     {p.place}
                   </span>
-                  <span className="mt-1 block truncate font-headline text-base italic group-hover:text-primary">
+                  <span className="mt-1 block truncate font-headline text-base font-medium group-hover:text-primary">
                     {p.work?.title}
                   </span>
                   <span className="block text-[12px] text-muted-foreground">

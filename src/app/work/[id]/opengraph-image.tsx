@@ -18,9 +18,9 @@ export default async function OG({ params }: { params: Promise<{ id: string }> }
           display: "flex",
           width: "100%",
           height: "100%",
-          background: "#f7f5f2",
-          fontFamily: "Georgia, serif",
-          color: "#1a1a1a",
+          background: "#f4f4f4",
+          fontFamily: "Helvetica, Arial, sans-serif",
+          color: "#000000",
         }}
       >
         <div
@@ -37,11 +37,11 @@ export default async function OG({ params }: { params: Promise<{ id: string }> }
               style={{
                 width: 32,
                 height: 32,
-                background: "#ED1B2E",
+                background: "#df1924",
                 color: "white",
-                fontSize: 22,
-                fontStyle: "italic",
+                fontSize: 18,
                 fontWeight: 700,
+                textTransform: "uppercase",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -53,7 +53,7 @@ export default async function OG({ params }: { params: Promise<{ id: string }> }
               style={{
                 fontFamily: "monospace",
                 fontSize: 16,
-                color: "#ED1B2E",
+                color: "#df1924",
                 letterSpacing: "0.18em",
                 textTransform: "uppercase",
               }}
@@ -72,11 +72,12 @@ export default async function OG({ params }: { params: Promise<{ id: string }> }
             />
             <div
               style={{
+                fontFamily: "Helvetica, Arial, sans-serif",
                 fontSize: 64,
                 fontWeight: 700,
-                fontStyle: "italic",
-                lineHeight: 1.05,
-                letterSpacing: "-0.01em",
+                textTransform: "uppercase",
+                lineHeight: 1.0,
+                letterSpacing: "-0.005em",
               }}
             >
               {work?.title ?? "PMA Explorer"}

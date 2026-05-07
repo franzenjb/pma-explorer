@@ -5,7 +5,7 @@ export function SiteFooter() {
   const meta = loadMeta();
   const date = meta.scraped_at?.slice(0, 10);
   return (
-    <footer className="mt-24 border-t-[3px] border-arc-black bg-card">
+    <footer className="mt-24 border-t border-border bg-card">
       <div className="mx-auto grid max-w-7xl gap-6 px-6 py-10 sm:grid-cols-3">
         <div>
           <p className="font-data text-[10px] uppercase tracking-[0.22em] text-primary">

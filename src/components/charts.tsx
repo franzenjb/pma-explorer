@@ -14,14 +14,14 @@ import {
 } from "recharts";
 
 const PALETTE = [
-  "var(--red, #c4302b)",
-  "oklch(0.45 0.05 60)",
-  "oklch(0.6 0.04 80)",
-  "oklch(0.7 0.03 90)",
-  "oklch(0.32 0.02 70)",
-  "oklch(0.55 0.06 40)",
-  "oklch(0.5 0.04 100)",
-  "oklch(0.65 0.05 50)",
+  "#df1924", // PMA red
+  "#4b8da4", // PMA teal
+  "#444444",
+  "#a3a3a3",
+  "#f76a0c",
+  "#000000",
+  "#888888",
+  "#cccccc",
 ];
 
 type Datum = { name: string; value: number };

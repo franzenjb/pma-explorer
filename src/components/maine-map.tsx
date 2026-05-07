@@ -64,8 +64,8 @@ export function MaineMap({ pins }: { pins: MainePin[] }) {
                 <p
                   style={{
                     fontFamily: "var(--font-headline)",
-                    fontStyle: "italic",
-                    fontSize: 16,
+                    fontWeight: 600,
+                    fontSize: 17,
                     margin: "4px 0",
                   }}
                 >

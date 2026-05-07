@@ -27,20 +27,18 @@ export function WorkCard({ work }: { work: Work }) {
           <div className="pointer-events-none absolute inset-0 ring-0 ring-primary transition-all duration-200 group-hover:ring-2" />
         </div>
         <div className="mt-3 space-y-1">
-          <h3 className="font-headline text-lg italic leading-snug group-hover:text-primary">
-            {work.title}
-          </h3>
-          <p className="text-sm">
-            {work.artist ?? "Artist unknown"}
-            {work.year ? (
-              <span className="text-muted-foreground"> · {work.year}</span>
-            ) : null}
-          </p>
           {work.category ? (
-            <p className="font-data text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+            <p className="font-data text-[10px] uppercase tracking-[0.16em] text-primary">
               {work.category}
             </p>
           ) : null}
+          <h3 className="font-headline text-[20px] font-medium leading-tight tracking-tight group-hover:text-primary">
+            {work.title}
+          </h3>
+          <p className="text-[14px] text-muted-foreground">
+            {work.artist ?? "Artist unknown"}
+            {work.year ? <span> · {work.year}</span> : null}
+          </p>
         </div>
       </article>
     </Link>

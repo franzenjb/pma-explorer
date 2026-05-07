@@ -48,7 +48,7 @@ function FeaturedTile({
           <p className="font-data text-[10px] uppercase tracking-[0.22em] text-white/80">
             {work.category ?? "Featured"}
           </p>
-          <h2 className={`mt-1 font-headline italic ${primary ? "text-3xl sm:text-4xl" : "text-xl"}`}>
+          <h2 className={`mt-1 font-headline font-medium uppercase tracking-tight ${primary ? "text-3xl sm:text-5xl" : "text-2xl"}`}>
             {work.title}
           </h2>
           <p className="mt-1 text-sm text-white/85">

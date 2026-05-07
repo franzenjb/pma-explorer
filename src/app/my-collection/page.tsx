@@ -98,7 +98,7 @@ export default function MyCollectionPage() {
                       href={`/work/${encodeURIComponent(w.id)}`}
                       className="min-w-0 flex-1"
                     >
-                      <h3 className="truncate font-headline text-lg italic group-hover:text-primary">
+                      <h3 className="truncate font-headline text-lg font-medium group-hover:text-primary">
                         {w.title}
                       </h3>
                       <p className="text-sm">

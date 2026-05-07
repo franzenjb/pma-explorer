@@ -60,9 +60,9 @@ export default async function Home({
       <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-12">
         <section className="border-b border-border pb-12">
           <hr className="rule-red" />
-          <h2 className="mt-3 max-w-3xl font-headline text-5xl leading-[1.05] tracking-tight sm:text-6xl">
+          <h2 className="mt-4 max-w-4xl font-headline text-[56px] font-semibold uppercase leading-[0.98] tracking-tight sm:text-[80px]">
             Featured works from the{" "}
-            <em className="text-primary">Portland Museum of Art</em>.
+            <span className="text-primary">Portland Museum of Art</span>.
           </h2>
           <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground">
             A small, fast browse of paintings, photographs, decorative arts, and
@@ -173,7 +173,7 @@ function DailyTeaser() {
         <span className="font-data text-[10px] uppercase tracking-[0.22em] text-primary">
           Daily Painting · {targetDate}
         </span>
-        <span className="mt-1 block truncate font-headline text-lg italic">
+        <span className="mt-1 block truncate font-headline text-lg font-medium">
           {work.title}
         </span>
         <span className="block truncate text-[13px] text-muted-foreground">

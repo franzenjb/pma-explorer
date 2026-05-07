@@ -67,7 +67,7 @@ export default async function ComparePage({
                       ) : null}
                     </div>
                   </Link>
-                  <h2 className="font-headline text-xl italic leading-tight">
+                  <h2 className="font-headline text-xl font-medium leading-tight">
                     {w.title}
                   </h2>
                   <p className="text-sm">
@@ -119,7 +119,7 @@ export default async function ComparePage({
 }
 
 const ROWS: Array<{ label: string; value: (w: ReturnType<typeof findWork> & object) => React.ReactNode }> = [
-  { label: "Title", value: (w) => <em className="font-headline">{w.title}</em> },
+  { label: "Title", value: (w) => <span className="font-headline font-medium">{w.title}</span> },
   { label: "Artist", value: (w) => w.artist ?? null },
   { label: "Year", value: (w) => w.year ?? null },
   { label: "Medium", value: (w) => w.medium ?? null },
@@ -195,7 +195,7 @@ function SuggestionPicker({ picks }: { picks: string[] }) {
                   />
                 ) : null}
               </div>
-              <p className="font-headline text-sm italic leading-tight">{w.title}</p>
+              <p className="font-headline text-sm font-medium leading-tight">{w.title}</p>
               <p className="text-[11px] text-muted-foreground">{w.artist}</p>
             </div>
           ) : null

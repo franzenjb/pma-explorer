@@ -90,7 +90,7 @@ export default async function WorkPage({ params }: PageProps) {
             <p className="font-data text-[10px] uppercase tracking-[0.24em] text-primary">
               {work.category ?? "Work"}
             </p>
-            <h1 className="mt-2 font-headline text-4xl italic leading-tight">
+            <h1 className="mt-2 font-headline text-4xl font-medium leading-tight">
               {work.title}
             </h1>
             <p className="mt-2 text-base">
@@ -160,7 +160,7 @@ export default async function WorkPage({ params }: PageProps) {
                 <p className="font-data text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
                   Previous
                 </p>
-                <p className="font-headline italic group-hover:text-primary">
+                <p className="font-headline font-medium group-hover:text-primary">
                   {prev.title}
                 </p>
               </div>
@@ -177,7 +177,7 @@ export default async function WorkPage({ params }: PageProps) {
                 <p className="font-data text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
                   Next
                 </p>
-                <p className="font-headline italic group-hover:text-primary">
+                <p className="font-headline font-medium group-hover:text-primary">
                   {next.title}
                 </p>
               </div>

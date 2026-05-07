@@ -1,24 +1,40 @@
 import type { Metadata } from "next";
-import { Libre_Baskerville, Source_Sans_3, IBM_Plex_Mono } from "next/font/google";
+import {
+  Barlow,
+  Barlow_Condensed,
+  Libre_Baskerville,
+  IBM_Plex_Mono,
+} from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const headline = Libre_Baskerville({
+// Body — closest free Google match for URW DIN used across portlandmuseum.org
+const body = Barlow({
+  variable: "--font-body",
+  weight: ["300", "400", "500", "600", "700"],
+  subsets: ["latin"],
+  display: "swap",
+});
+
+// Headlines — closest free Google match for urw-din-condensed used by PMA's H1
+const headline = Barlow_Condensed({
   variable: "--font-headline",
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+  display: "swap",
+});
+
+// Editorial italic flourish — PMA uses Baskerville sparingly for emphasis.
+const flourish = Libre_Baskerville({
+  variable: "--font-flourish",
   weight: ["400", "700"],
   style: ["normal", "italic"],
   subsets: ["latin"],
   display: "swap",
 });
 
-const body = Source_Sans_3({
-  variable: "--font-body",
-  weight: ["300", "400", "600", "700"],
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const mono = IBM_Plex_Mono({
+// Tabular data
+const data = IBM_Plex_Mono({
   variable: "--font-data",
   weight: ["400", "500"],
   subsets: ["latin"],
@@ -40,12 +56,12 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${headline.variable} ${body.variable} ${mono.variable} h-full antialiased`}
+      className={`${headline.variable} ${body.variable} ${flourish.variable} ${data.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

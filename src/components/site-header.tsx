@@ -20,20 +20,20 @@ const NAV = [
 export function SiteHeader() {
   const works = loadWorks();
   return (
-    <header className="border-b-[3px] border-arc-black bg-card">
+    <header className="border-b border-border bg-card">
       <div className="mx-auto max-w-7xl px-6 pt-8 pb-6">
         <div className="flex items-center gap-3">
           <Mark />
-          <span className="font-data text-[13px] font-semibold uppercase tracking-[0.18em] text-primary">
+          <span className="font-data text-[12px] font-semibold uppercase tracking-[0.18em] text-primary">
             Portland Museum of Art
           </span>
         </div>
-        <div className="mt-1 flex flex-wrap items-end justify-between gap-6">
+        <div className="mt-2 flex flex-wrap items-end justify-between gap-6">
           <Link href="/" className="block">
-            <h1 className="font-headline text-[30px] font-bold leading-tight tracking-tight">
+            <h1 className="font-headline text-[40px] font-semibold uppercase leading-none tracking-tight sm:text-[48px]">
               PMA Explorer
             </h1>
-            <p className="mt-1 text-[15px] text-muted-foreground">
+            <p className="mt-2 text-[15px] text-muted-foreground">
               A demonstration index of the museum&rsquo;s public collection.
             </p>
           </Link>
@@ -81,7 +81,7 @@ function Mark() {
   return (
     <span
       aria-hidden
-      className="inline-flex h-7 w-7 items-center justify-center bg-primary font-headline text-[13px] italic font-bold text-primary-foreground"
+      className="inline-flex h-7 w-7 items-center justify-center bg-primary font-headline text-[14px] font-semibold uppercase text-primary-foreground"
     >
       P
     </span>
