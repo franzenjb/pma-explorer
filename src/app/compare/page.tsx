@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { SectionHeading } from "@/components/section-heading";
 import { findWork, loadWorks, parseYear, pickRandom } from "@/lib/works";
+import { getCompareNarrative } from "@/lib/compare-narratives";
 
 type SearchParams = Promise<{ ids?: string }>;
 
@@ -78,6 +79,8 @@ export default async function ComparePage({
               ))}
             </div>
 
+            <NarrativeBlock ids={picked.map((w) => w.id)} />
+
             {/* Read-across table */}
             <table className="mt-12 w-full border-t border-border text-[13px]">
               <tbody>
@@ -139,6 +142,51 @@ const ROWS: Array<{ label: string; value: (w: ReturnType<typeof findWork> & obje
       ) : null,
   },
 ];
+
+function NarrativeBlock({ ids }: { ids: string[] }) {
+  const entry = getCompareNarrative(ids);
+  if (entry) {
+    return (
+      <article className="mt-12 border border-border bg-card p-6 sm:p-8">
+        <header className="flex items-baseline justify-between gap-4">
+          <p className="font-data text-[10px] uppercase tracking-[0.22em] text-primary">
+            Read across · curator-tuned model
+          </p>
+          {entry.generated_by === "placeholder" ? (
+            <span className="font-data text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              placeholder
+            </span>
+          ) : null}
+        </header>
+        <hr className="rule-red mt-3" />
+        <p className="mt-5 max-w-3xl whitespace-pre-line text-[15px] leading-relaxed">
+          {entry.narrative}
+        </p>
+        <p className="mt-5 font-data text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+          Generated {entry.generated_at.slice(0, 10)} · grounded only in the
+          works&rsquo; catalog metadata
+        </p>
+      </article>
+    );
+  }
+  // No cached narrative for this exact combo. Show a minimal hint with the
+  // shell command the operator can run to generate one.
+  return (
+    <article className="mt-12 border border-dashed border-border bg-card p-6 sm:p-8">
+      <p className="font-data text-[10px] uppercase tracking-[0.22em] text-primary">
+        Read across
+      </p>
+      <h3 className="mt-2 font-headline text-2xl">No narrative yet</h3>
+      <p className="mt-2 max-w-2xl text-[14px] text-muted-foreground">
+        This combination doesn&rsquo;t have a generated read-across essay
+        cached. Run the script to add one:
+      </p>
+      <pre className="mt-3 inline-block overflow-x-auto bg-muted px-4 py-2 font-data text-[12px]">
+        <code>python scripts/generate_compare.py {ids.join(" ")}</code>
+      </pre>
+    </article>
+  );
+}
 
 function minYear(ws: ReturnType<typeof findWork>[]) {
   const ys = ws.map((w) => w && parseYear(w.year)).filter(Boolean) as number[];

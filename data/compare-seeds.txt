@@ -1,0 +1,9 @@
+# Seed combos for /compare narratives. One combo per line, comma- or
+# space-separated accession ids. Re-run scripts/generate_compare.py
+# --combos-file data/compare-seeds.txt to regenerate.
+1996.38.29, 1996.38.63
+1988.55.1, 1996.38.29
+1998.96, 2014.15.4
+1996.38.1, 1996.38.63
+1888.1, 1996.12
+1996.38.29, 2014.15.4, 1998.96
