@@ -1,19 +1,15 @@
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { WorkCard } from "@/components/work-card";
-import { CategoryFilter } from "@/components/category-filter";
 import { HeroRotator } from "@/components/hero-rotator";
 import { CollectionReel } from "@/components/collection-reel";
-import { Toolbar } from "@/components/toolbar";
 import { SectionHeading } from "@/components/section-heading";
 import { StatBar } from "@/components/stat-bar";
-import { DecadeScrubber } from "@/components/decade-scrubber";
+import { CollectionBrowser } from "@/components/collection-browser";
 import {
   loadCategories,
   loadDecades,
   loadWorks,
   pickRandom,
-  searchAndSort,
 } from "@/lib/works";
 import { getDaily, todayUTC, listDailyDates } from "@/lib/daily";
 import { findWork } from "@/lib/works";
@@ -38,7 +34,6 @@ export default async function Home({
   const categories = loadCategories();
   const decades = loadDecades();
 
-  const filtered = searchAndSort(works, sp);
   const hasFilter =
     Boolean(sp.q) ||
     Boolean(sp.category) ||
@@ -113,33 +108,16 @@ export default async function Home({
           <SectionHeading
             number="02"
             kicker="Browse"
-            title={
-              hasFilter
-                ? `${filtered.length} of ${works.length} works`
-                : "The full demo collection"
-            }
-            subtitle="Search by title, artist, medium, or accession number. Sort to compare across centuries."
+            title="The full demo collection"
+            subtitle="Search by title, artist, medium, or accession number. Filters update the grid live."
           />
-          <Toolbar totalCount={works.length} />
-          <CategoryFilter categories={categories} active={sp.category ?? null} />
-          <DecadeScrubber
+          <CollectionBrowser
+            works={works}
+            categories={categories}
             decades={decades}
-            active={sp.decade ?? null}
-            preserve={sp}
+            initial={sp}
           />
         </section>
-
-        {filtered.length === 0 ? (
-          <EmptyState />
-        ) : (
-          <ul className="mt-10 grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:grid-cols-4">
-            {filtered.map((work) => (
-              <li key={work.id}>
-                <WorkCard work={work} />
-              </li>
-            ))}
-          </ul>
-        )}
       </main>
       <SiteFooter />
     </>
@@ -196,15 +174,4 @@ function countArtists(works: { artist: string | null }[]) {
   const set = new Set<string>();
   for (const w of works) if (w.artist) set.add(w.artist);
   return set.size;
-}
-
-function EmptyState() {
-  return (
-    <div className="mt-10 border border-dashed border-border p-12 text-center">
-      <h2 className="font-headline text-2xl">No matches</h2>
-      <p className="mt-3 text-sm text-muted-foreground">
-        Try a different search term or clear the filters.
-      </p>
-    </div>
-  );
 }

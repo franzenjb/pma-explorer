@@ -67,7 +67,7 @@ export function DecadeScrubber({ decades, active, preserve }: Props) {
               href={href}
               title={`${d.decade} · ${d.count} ${d.count === 1 ? "work" : "works"}`}
               aria-label={`${d.decade}, ${d.count} works`}
-              className="group relative block h-16 bg-transparent"
+              className="group relative block h-28 bg-transparent sm:h-32"
             >
               <span
                 className="absolute bottom-0 left-0 right-0 transition-colors"
