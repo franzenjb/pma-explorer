@@ -8,6 +8,7 @@ import { loadWorks } from "@/lib/works";
 
 const NAV = [
   { href: "/", label: "Home" },
+  { href: "/future", label: "Future" },
   { href: "/collection", label: "Collection" },
   { href: "/color", label: "Color" },
   { href: "/map", label: "Map" },
